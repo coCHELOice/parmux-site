@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PARMUX — ParmuxLab</title>
+  <meta name="description" content="ParmuxLab: Operational AI Systems. Triage operativo, agentes y automatización con trazabilidad." />
+  <style>
+    :root{
+      --bg:#0b0b0c;
+      --panel:rgba(255,255,255,.03);
+      --line:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.62);
+      --accent:#6ee7ff;
+      --accent2:#a78bfa;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:
+        radial-gradient(900px 520px at 18% 10%, rgba(110,231,255,.10), transparent 56%),
+        radial-gradient(900px 520px at 82% 20%, rgba(167,139,250,.08), transparent 58%),
+        var(--bg);
+      color:var(--text);
+      letter-spacing:.1px;
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 72px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .mark{
+      width:34px;height:34px;border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(circle at 28% 28%, rgba(110,231,255,.95) 0 2px, transparent 3px),
+        radial-gradient(circle at 72% 28%, rgba(167,139,250,.95) 0 2px, transparent 3px),
+        radial-gradient(circle at 28% 72%, rgba(167,139,250,.95) 0 2px, transparent 3px),
+        radial-gradient(circle at 72% 72%, rgba(110,231,255,.95) 0 2px, transparent 3px),
+        linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,.18)) 50% 28%/44% 1px no-repeat,
+        linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,.18)) 50% 72%/44% 1px no-repeat,
+        linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.18)) 28% 50%/1px 44% no-repeat,
+        linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.18)) 72% 50%/1px 44% no-repeat,
+        radial-gradient(120% 120% at 20% 10%, rgba(110,231,255,.08), transparent 55%),
+        radial-gradient(120% 120% at 80% 20%, rgba(167,139,250,.06), transparent 55%);
+    }
+    .brandname{font-weight:860;font-size:14px;letter-spacing:.08em}
+    nav{display:flex;gap:14px;flex-wrap:wrap}
+    nav a{font-size:12px;color:var(--muted)}
+    nav a:hover{color:var(--text)}
+    .hero{padding:62px 0 18px}
+    h1{margin:0;font-size:58px;line-height:1.02;letter-spacing:-1.3px}
+    @media (max-width:720px){h1{font-size:44px}}
+    .subbrand{margin-top:10px;font-size:13px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase}
+    .tag{margin-top:14px;font-size:16px;color:var(--muted);max-width:760px}
+    .proof{
+      margin-top:16px;
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:9px 12px;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      background:var(--panel);
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 4px rgba(110,231,255,.10)}
+    .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:11px 14px;border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      font-weight:750;font-size:13px;
+    }
+    .btn.primary{
+      border-color:rgba(110,231,255,.26);
+      background:linear-gradient(135deg, rgba(110,231,255,.18), rgba(167,139,250,.10));
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+    @media (max-width:860px){.grid{grid-template-columns:1fr}}
+    .card{
+      border:1px solid var(--line);
+      background:var(--panel);
+      border-radius:18px;
+      padding:16px;
+    }
+    .card h2{margin:0 0 8px;font-size:14px;letter-spacing:.2px}
+    .card p{margin:0;color:var(--muted);font-size:13px}
+    .line{height:1px;background:var(--line);margin:22px 0}
+    .two{display:grid;grid-template-columns:1.12fr .88fr;gap:12px}
+    @media (max-width:860px){.two{grid-template-columns:1fr}}
+    .k{font-size:12px;color:var(--muted)}
+    .v{margin-top:4px;font-size:13px}
+    ul{margin:0;padding:0;list-style:none}
+    li{padding:10px 0;border-top:1px solid rgba(255,255,255,.08)}
+    li:first-child{border-top:0}
+    .accent{color:var(--accent)}
+    .pill{display:inline-block;padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10);
+      color:var(--muted);font-size:12px;margin:6px 6px 0 0;background:rgba(255,255,255,.02)}
+    footer{margin-top:34px;color:var(--muted);font-size:12px}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:.95em}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div class="brandname">PARMUX</div>
+      </div>
+      <nav>
+        <a href="#clave">Clave</a>
+        <a href="#producto">Producto</a>
+        <a href="#guardrails">Guardrails</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>PARMUX</h1>
+        <div class="subbrand">ParmuxLab</div>
+        <p class="tag">
+          <strong>Operational AI</strong> que ordena tu entrada operativa y ejecuta flujos con trazabilidad.
+          Empezamos por <span class="accent">Triage Operativo</span>: clasifica, prioriza, pide datos faltantes y registra cada decisión en logs.
+        </p>
+
+        <div class="proof"><span class="dot"></span> Piloto 7–14 días · Logs y costos por ejecución · Salidas JSON validadas</div>
+
+        <div class="cta">
+          <a class="btn primary" href="#contacto">Agendar diagnóstico (20 min)</a>
+          <a class="btn" href="#producto">Ver alcance</a>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h2>Entrada ordenada</h2>
+            <p>Dejas de “perseguir” solicitudes: el sistema las <span class="accent">organiza</span> y enruta.</p>
+          </div>
+          <div class="card">
+            <h2>Menos errores</h2>
+            <p>Si falta información crítica, no actúa. Pide lo necesario y deja registro.</p>
+          </div>
+          <div class="card">
+            <h2>Control operativo</h2>
+            <p>Logs + métricas + costo por ejecución. Ingeniería, no magia.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="line"></div>
+
+
+      <section id="clave" class="two">
+        <div class="card">
+          <h2>Lo clave</h2>
+          <p class="k">Esto es lo que convierte una landing en una máquina de cierre.</p>
+          <ul style="margin-top:10px">
+            <li><div class="k">Oferta</div><div class="v"><strong>Piloto Triage</strong> (7–14 días) + logs + contrato JSON + manual 1 pág.</div></li>
+            <li><div class="k">Resultado</div><div class="v">Entrada ordenada, menos reprocesos, trazabilidad y control de costo por ejecución.</div></li>
+            <li><div class="k">Garantía de enfoque</div><div class="v">Alcance acotado: 1 canal, 3 categorías, 1 destino. Luego escalamos.</div></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Mini‑caso (realista)</h2>
+          <ul style="margin-top:10px">
+            <li><div class="k">Contexto</div><div class="v">Soporte recibe correos y formularios; el triage manual se come 1–2 horas/día.</div></li>
+            <li><div class="k">Intervención</div><div class="v">Clasificación + prioridad + solicitud de datos + creación de ticket + log por ejecución.</div></li>
+            <li><div class="k">Indicador</div><div class="v">Meta del piloto: <strong>−50% tiempo de triage</strong> y <strong>−30% errores de registro</strong> (medible).</div></li>
+          </ul>
+          <div class="line" style="margin:14px 0"></div>
+          <p class="v"><strong>Precio de referencia:</strong> Piloto desde <span class="accent">USD 900</span> (consultoría) — se ajusta por canal/destino.</p>
+        </div>
+      </section>
+
+      <div class="line"></div>
+      <section id="producto" class="two">
+        <div class="card">
+          <h2>Producto #1 — Piloto Triage Operativo</h2>
+          <p class="k">Implementación acotada para medir impacto rápido.</p>
+          <ul style="margin-top:10px">
+            <li><div class="k">Canal</div><div class="v">1 canal: Webhook/API (recomendado) o Email.</div></li>
+            <li><div class="k">Clasificación</div><div class="v">3 categorías: Soporte / Ventas / Facturación.</div></li>
+            <li><div class="k">Reglas</div><div class="v">Prioridad + datos críticos + excepción por “duda”.</div></li>
+            <li><div class="k">Acción</div><div class="v">1 destino: Sheets / ticketera / CRM (según caso).</div></li>
+            <li><div class="k">Operación</div><div class="v">Logs por ejecución + resumen semanal (simple).</div></li>
+          </ul>
+          <p class="v" style="margin-top:12px"><strong>Entrega:</strong> workflow + contrato JSON + manual operativo (1 pág.).</p>
+        </div>
+
+        <div class="card">
+          <h2>Stack</h2>
+          <div style="margin-top:10px">
+            <div class="pill">n8n</div>
+            <div class="pill">Python + FastAPI</div>
+            <div class="pill">Postgres</div>
+            <div class="pill">JSON schema</div>
+            <div class="pill">Tool calling</div>
+          </div>
+          <div class="line" style="margin:14px 0"></div>
+          <h2 style="margin-top:0">Mini-caso (tipo)</h2>
+          <ul style="margin-top:10px">
+            <li><div class="k">Antes</div><div class="v">120 correos/semana. Triage manual. Campos incompletos.</div></li>
+            <li><div class="k">Después</div><div class="v">Clasificación + solicitud de datos + ticket automático.</div></li>
+            <li><div class="k">Impacto</div><div class="v">−60% tiempo operativo · −40% errores de registro (estimación inicial).</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="line"></div>
+
+      <section id="guardrails" class="two">
+        <div class="card">
+          <h2>Guardrails (anti-alucinación)</h2>
+          <ul style="margin-top:10px">
+            <li><div class="k">1</div><div class="v"><strong>Si faltan datos → no actúa</strong>. Pide información.</div></li>
+            <li><div class="k">2</div><div class="v"><strong>Si hay duda → pide confirmación</strong>. Human-in-the-loop.</div></li>
+            <li><div class="k">3</div><div class="v"><strong>Salida determinista</strong>: JSON validado (menos sorpresas).</div></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Paquetes</h2>
+          <ul style="margin-top:10px">
+            <li><div class="k">A</div><div class="v"><strong>Diagnóstico</strong> — 2–4 días (Top 3 automatizaciones + ROI).</div></li>
+            <li><div class="k">B</div><div class="v"><strong>Piloto</strong> — 7–14 días (Triage Operativo).</div></li>
+            <li><div class="k">C</div><div class="v"><strong>Operación</strong> — mensual (monitoreo + mejoras + control de costos).</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="line"></div>
+
+      <section id="contacto" class="two">
+        <div class="card">
+          <h2>Contacto</h2>
+          <p class="k">Versión local: luego conectamos el CTA a Calendly/WhatsApp/email.</p>
+          <p class="v" style="margin-top:10px">
+            Email sugerido: <span class="accent">hola@parmux.com</span>
+          </p>
+        </div>
+
+        <div class="card">
+          <h2>Checklist (20 min)</h2>
+          <ul style="margin-top:10px">
+            <li><div class="k">Canal</div><div class="v">Email / webhook / tickets.</div></li>
+            <li><div class="k">Volumen</div><div class="v">Casos por día/semana.</div></li>
+            <li><div class="k">Destino</div><div class="v">Sheets / CRM / ERP / ticketera.</div></li>
+            <li><div class="k">Dolor</div><div class="v">Demora / errores / trazabilidad.</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <footer>
+        <div>© <span id="y"></span> PARMUX · ParmuxLab</div>
+        <div style="margin-top:6px">Single-file <code>index.html</code> para probar local / publicar.</div>
+      </footer>
+    </main>
+  </div>
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>
