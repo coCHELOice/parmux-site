@@ -8,25 +8,20 @@
   <meta name="description"
     content="PARMUX: Operational AI para clínicas y operaciones con triage, clasificación, alertas y trazabilidad." />
   <meta name="theme-color" content="#0b0b0c" />
-
   <meta property="og:title" content="PARMUX — Triage Operativo y Automatización" />
   <meta property="og:description"
     content="Operational AI que ordena solicitudes, las clasifica, las deriva y deja trazabilidad." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://parmux.com" />
   <meta property="og:image" content="https://parmux.com/og-image.jpg" />
-
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="PARMUX — Triage Operativo" />
   <meta name="twitter:description" content="Operational AI que ordena tu entrada operativa." />
-
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
   <style>
     :root {
       --bg: #0b0b0c;
@@ -57,10 +52,7 @@
     body {
       margin: 0;
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-      background:
-        radial-gradient(900px 520px at 18% 10%, rgba(110, 231, 255, .10), transparent 56%),
-        radial-gradient(900px 520px at 82% 20%, rgba(167, 139, 250, .08), transparent 58%),
-        var(--bg);
+      background: radial-gradient(900px 520px at 18% 10%, rgba(110, 231, 255, .10), transparent 56%), radial-gradient(900px 520px at 82% 20%, rgba(167, 139, 250, .08), transparent 58%), var(--bg);
       color: var(--text);
       letter-spacing: .1px;
     }
@@ -104,17 +96,7 @@
       height: 34px;
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, .10);
-      background:
-        radial-gradient(circle at 28% 28%, rgba(110, 231, 255, .95) 0 2px, transparent 3px),
-        radial-gradient(circle at 72% 28%, rgba(167, 139, 250, .95) 0 2px, transparent 3px),
-        radial-gradient(circle at 28% 72%, rgba(167, 139, 250, .95) 0 2px, transparent 3px),
-        radial-gradient(circle at 72% 72%, rgba(110, 231, 255, .95) 0 2px, transparent 3px),
-        linear-gradient(90deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .18)) 50% 28%/44% 1px no-repeat,
-        linear-gradient(90deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .18)) 50% 72%/44% 1px no-repeat,
-        linear-gradient(180deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .18)) 28% 50%/1px 44% no-repeat,
-        linear-gradient(180deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .18)) 72% 50%/1px 44% no-repeat,
-        radial-gradient(120% 120% at 20% 10%, rgba(110, 231, 255, .08), transparent 55%),
-        radial-gradient(120% 120% at 80% 20%, rgba(167, 139, 250, .06), transparent 55%);
+      background: radial-gradient(circle at 28% 28%, rgba(110, 231, 255, .95) 0 2px, transparent 3px), radial-gradient(circle at 72% 28%, rgba(167, 139, 250, .95) 0 2px, transparent 3px), radial-gradient(circle at 28% 72%, rgba(167, 139, 250, .95) 0 2px, transparent 3px), radial-gradient(circle at 72% 72%, rgba(110, 231, 255, .95) 0 2px, transparent 3px), linear-gradient(90deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .18)) 50% 28%/44% 1px no-repeat, linear-gradient(90deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .18)) 50% 72%/44% 1px no-repeat, linear-gradient(180deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .18)) 28% 50%/1px 44% no-repeat, linear-gradient(180deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .18)) 72% 50%/1px 44% no-repeat, radial-gradient(120% 120% at 20% 10%, rgba(110, 231, 255, .08), transparent 55%), radial-gradient(120% 120% at 80% 20%, rgba(167, 139, 250, .06), transparent 55%);
     }
 
     .brandname {
@@ -217,8 +199,19 @@
       background: linear-gradient(135deg, rgba(110, 231, 255, .18), rgba(167, 139, 250, .10));
     }
 
-    .btn:hover {
+    .btn:hover,
+    .btn-outline:hover {
       transform: translateY(-1px)
+    }
+
+    .btn.btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, .15);
+    }
+
+    .btn.btn-outline:hover {
+      background: rgba(255, 255, 255, .05);
+      border-color: rgba(255, 255, 255, .30);
     }
 
     .link.subtle {
@@ -283,6 +276,7 @@
     }
 
     @media (max-width:860px) {
+
       .two,
       .three {
         grid-template-columns: 1fr
@@ -467,6 +461,7 @@
       font-size: 13px;
       color: var(--muted);
       display: none;
+      white-space: pre-wrap;
     }
 
     .response-box.is-visible {
@@ -572,37 +567,32 @@
         <h1>PARMUX</h1>
         <div class="subbrand">ParmuxLab</div>
         <p class="tag">
-          <strong>Operational AI</strong> para ordenar solicitudes, clasificarlas y derivarlas con trazabilidad.
-          Empezamos por <span class="accent">Triage Operativo</span>: recibe un caso, lo prioriza, lo enruta y deja
-          registro útil para seguimiento.
+          PARMUX ordena mensajes de clientes, clasifica consultas y prioriza urgencias para que clínicas y negocios de
+          atención no pierdan tiempo ni solicitudes. Un <span class="accent">Triage Operativo</span> para tu negocio.
         </p>
 
-        <div class="proof"><span class="dot"></span> Piloto 7–14 días · Clasificación automática · Registro y alerta
-          por caso</div>
+        <div class="proof"><span class="dot"></span> Piloto 7–14 días · Clasificación de consultas · Alertas y registro
+          desde el primer día</div>
 
         <div class="cta animate-fade-in delay-1">
-          <a class="btn primary"
-            href="https://wa.me/56937803815?text=Hola%20PARMUX%2C%20quiero%20un%20diagn%C3%B3stico%20de%2015%20min.%20Mi%20caso%3A%20%5Bdescribe%20en%201%20l%C3%ADnea%5D.%20Herramientas%3A%20%5BGmail%2FWhatsApp%2FCRM%2FSheets%5D.%20Volumen%3A%20%5B%23%20por%20semana%5D."
-            target="_blank" rel="noopener"
-            aria-label="Contactar por WhatsApp para un diagnóstico operativo de 15 minutos">Diagnóstico por WhatsApp
-            (15 min)</a>
+          <a class="btn primary" href="https://wa.me/56937803815" target="_blank" rel="noopener">Diagnóstico por
+            WhatsApp (15 min)</a>
           <a class="btn" href="#demo">Ver demo operativa</a>
         </div>
         <a class="link subtle" href="#demo">Prefiero dejar un caso de prueba (30s)</a>
 
         <div class="grid animate-fade-in delay-2">
           <div class="card">
-            <h2>Entrada ordenada</h2>
-            <p>Dejas de perseguir solicitudes: el sistema las <span class="accent">recibe, organiza y enruta</span>.
-            </p>
+            <h2>Entrada desordenada</h2>
+            <p>Dejas de revisar mensajes a mano. El sistema recibe y ordena cada solicitud por ti.</p>
           </div>
           <div class="card">
-            <h2>Menos fricción</h2>
-            <p>Clasifica por reglas, deja prioridad y reduce pérdida de casos entre WhatsApp, llamados y formularios.</p>
+            <h2>Priorización útil</h2>
+            <p>Distingue urgencias de preguntas generales. Deriva rápidamente a la persona responsable.</p>
           </div>
           <div class="card">
-            <h2>Control operativo</h2>
-            <p>Registro visible, alertas al equipo y seguimiento básico desde el primer piloto.</p>
+            <h2>Seguimiento visible</h2>
+            <p>Cada consulta genera un registro claro. Tendrás control y trazabilidad en todo momento.</p>
           </div>
         </div>
       </section>
@@ -612,46 +602,48 @@
       <section id="clave" class="two">
         <div class="card">
           <h2>Lo clave</h2>
-          <p class="k">Esto es lo que convierte una consulta dispersa en una máquina de cierre y seguimiento.</p>
+          <p class="k">Todo lo que necesitas saber sobre nuestra intervención inicial.</p>
           <ul>
             <li>
-              <div class="k">Oferta</div>
-              <div class="v"><strong>Piloto Triage</strong> (7–14 días) + clasificación + alertas + registro + manual
-                operativo.</div>
+              <div class="k">Qué incluye el piloto</div>
+              <div class="v"><strong>7 a 14 días</strong> de implementación: configuración de tu canal de entrada,
+                reglas de clasificación, sistema de alertas y registro de casos.</div>
             </li>
             <li>
-              <div class="k">Resultado</div>
-              <div class="v">Entrada ordenada, menos reprocesos, trazabilidad y prioridad visible por caso.</div>
+              <div class="k">Resultado operativo</div>
+              <div class="v">Una recepción ordenada. Disminución del tiempo de respuesta y estado claro para cada
+                consulta que ingresa.</div>
             </li>
             <li>
-              <div class="k">Garantía de enfoque</div>
-              <div class="v">Alcance acotado: 1 canal, 3–6 categorías, 1 destino operativo. Luego escalamos.</div>
+              <div class="k">Alcance inicial</div>
+              <div class="v">Nos enfocamos primero en 1 solo canal de interacción y 1 único destino de registro para
+                asegurar resultados rápidos.</div>
             </li>
           </ul>
         </div>
 
         <div class="card">
-          <h2>Mini‑caso (clínicas)</h2>
+          <h2>Mini-caso (clínicas)</h2>
           <ul>
             <li>
-              <div class="k">Contexto</div>
-              <div class="v">Solicitudes mezcladas entre WhatsApp, recepción y formularios. Se pierden urgencias y se
-                retrasa la agenda.</div>
+              <div class="k">Antes</div>
+              <div class="v">Consultas mezcladas entre WhatsApp, teléfono y formularios. Las urgencias se pierden y la
+                recepción se satura.</div>
             </li>
             <li>
-              <div class="k">Intervención</div>
-              <div class="v">Formulario o webhook → clasificación → prioridad → alerta al equipo → registro en base
-                operativa.</div>
+              <div class="k">Después</div>
+              <div class="v">El sistema recibe, clasifica, prioriza y registra cada caso automáticamente. Se alerta al
+                equipo solo cuando es necesario.</div>
             </li>
             <li>
-              <div class="k">Indicador</div>
-              <div class="v">Meta del piloto: <strong>menos tiempos muertos</strong>, <strong>menos consultas
-                  perdidas</strong> y trazabilidad simple desde el día 1.</div>
+              <div class="k">Indicador de éxito</div>
+              <div class="v">Menos tiempos muertos y fin a las consultas no respondidas. Trazabilidad completa desde el
+                primer día.</div>
             </li>
           </ul>
           <div class="line"></div>
-          <p class="v"><strong>Precio de referencia:</strong> piloto desde <span class="accent">USD 900</span>
-            según canal, destino y complejidad.</p>
+          <p class="v"><strong>Precio de referencia:</strong> piloto desde <span class="accent">USD 900</span> según el
+            canal y volumen de casos.</p>
         </div>
       </section>
 
@@ -661,95 +653,106 @@
         <div class="card demo-card form-card">
           <div class="form-head">
             <div>
-              <h2>Demo PARMUX v1</h2>
-              <p class="k">Deja un caso de prueba. El sistema lo recibe, lo clasifica y lo envía a tu flujo operativo.</p>
+              <h2>Demo Triage Operativo</h2>
+              <p class="k">Deja un caso de prueba. El sistema lo recibe, lo clasifica y lo envía a tu flujo operativo.
+              </p>
             </div>
-            <div class="pill">60s demo</div>
+            <div class="pill">Demostración en vivo</div>
           </div>
 
           <form id="parmux-form" novalidate>
             <div class="form-grid">
-              <div class="field">
-                <label for="client_name">Nombre</label>
+              <div class="field full">
+                <label for="client_name">Nombre completo</label>
                 <input id="client_name" name="client_name" type="text" placeholder="Ej: Ana Soto" required>
               </div>
-              <div class="field">
-                <label for="client_phone">Teléfono</label>
+              <div class="field full">
+                <label for="client_phone">Teléfono de contacto</label>
                 <input id="client_phone" name="client_phone" type="tel" placeholder="+56 9 1234 5678" required>
               </div>
+              <div class="field full">
+                <label for="message">Mensaje, caso o solicitud</label>
+                <textarea id="message" name="message"
+                  placeholder="Ej: Quiero agendar una hora para mañana / Mi perro está con vómitos urgentes / Necesito resultados del mes."
+                  required></textarea>
+              </div>
+
+              <div class="field full"
+                style="margin-top: 10px; border-top: 1px dashed rgba(255, 255, 255, .15); padding-top: 14px;">
+                <label
+                  style="text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; font-size: 11px; display: block; margin-bottom: 4px;">Datos
+                  Adicionales (Opcional)</label>
+              </div>
+
               <div class="field">
-                <label for="client_email">Email</label>
+                <label for="client_email">Correo electrónico</label>
                 <input id="client_email" name="client_email" type="email" placeholder="nombre@correo.cl">
               </div>
               <div class="field">
-                <label for="request_type">Tipo de consulta</label>
+                <label for="request_type">Clasificación previa (Sugerida)</label>
                 <select id="request_type" name="request_type">
-                  <option value="consulta">Consulta general</option>
-                  <option value="agenda">Agenda</option>
-                  <option value="urgencia">Urgencia</option>
-                  <option value="administrativa">Administrativa</option>
-                  <option value="resultados">Resultados</option>
+                  <option value="consulta">Consulta estándar</option>
+                  <option value="agenda">Agendamiento</option>
+                  <option value="urgencia">Atención urgente</option>
+                  <option value="administrativa">Gestión administrativa</option>
+                  <option value="resultados">Envío de resultados</option>
                 </select>
               </div>
               <div class="field">
-                <label for="patient_name">Paciente o mascota</label>
+                <label for="patient_name">Nombre de involucrado/mascota</label>
                 <input id="patient_name" name="patient_name" type="text" placeholder="Ej: Luna">
               </div>
               <div class="field">
-                <label for="patient_type">Tipo de paciente</label>
-                <input id="patient_type" name="patient_type" type="text" placeholder="Humano / canino / felino...">
-              </div>
-              <div class="field full">
-                <label for="message">Mensaje</label>
-                <textarea id="message" name="message" placeholder="Ej: Quiero agendar una hora para mañana / Mi perro está con vómitos / Necesito resultados de laboratorio."
-                  required></textarea>
+                <label for="patient_type">Categoría del involucrado</label>
+                <input id="patient_type" name="patient_type" type="text" placeholder="Ej: Humano, Felino...">
               </div>
             </div>
 
             <div class="form-actions">
               <button class="btn primary" type="submit" id="submitBtn">Enviar caso de prueba</button>
-              <a class="btn" href="https://wa.me/56937803815" target="_blank" rel="noopener">Ir por WhatsApp</a>
             </div>
 
             <div class="response-box" id="formResponse" aria-live="polite"></div>
-            <div class="form-note">Esta demo está pensada para mostrar captura, clasificación, alerta y registro.
-            </div>
+            <div class="form-note">Esta simulación verifica captura, clasificación, prioridad y alerta.</div>
           </form>
         </div>
 
         <div class="card">
-          <h2>Qué hace en segundos</h2>
+          <h2>El flujo detrás del sistema</h2>
           <div class="micro-grid">
             <div class="micro">
               <strong>1. Captura</strong>
-              <span>Recibe el caso desde formulario web o webhook.</span>
+              <span>Recibe el mensaje desde tu formulario o canal.</span>
             </div>
             <div class="micro">
               <strong>2. Clasifica</strong>
-              <span>Ordena por agenda, urgencia, administración, resultados o reclamo.</span>
+              <span>Detecta de qué tipo de consulta se trata.</span>
             </div>
             <div class="micro">
-              <strong>3. Enruta</strong>
-              <span>Deriva al equipo correcto con prioridad visible.</span>
+              <strong>3. Prioriza</strong>
+              <span>Determina urgencia para alertar al equipo.</span>
             </div>
             <div class="micro">
               <strong>4. Registra</strong>
-              <span>Guarda el caso y deja base para seguimiento.</span>
+              <span>Guarda el caso en una base para su seguimiento.</span>
             </div>
           </div>
           <div class="line"></div>
           <ul>
             <li>
-              <div class="k">Categorías demo</div>
-              <div class="v">Agenda · Urgencia · Administrativa · Resultados · Reclamo.</div>
+              <div class="k">Reglas de negocio</div>
+              <div class="v">Clasificamos cada contacto siguiendo tus indicaciones: agendamiento, urgencias,
+                información, etc.</div>
             </li>
             <li>
-              <div class="k">Destino inicial</div>
-              <div class="v">n8n + alerta + Google Sheets o base similar.</div>
+              <div class="k">Destino de la información</div>
+              <div class="v">Enviamos las notificaciones a tu teléfono o correo y armamos una base de control en Google
+                Sheets o tu sistema.</div>
             </li>
             <li>
-              <div class="k">Lo que ve el cliente</div>
-              <div class="v">Una consulta deja de ser ruido y pasa a ser un caso trazable.</div>
+              <div class="k">Beneficio para el equipo</div>
+              <div class="v">Tu equipo deja de revisar listas interminables de mensajes buscando urgencias perdidas.
+              </div>
             </li>
           </ul>
         </div>
@@ -759,58 +762,60 @@
 
       <section id="producto" class="two">
         <div class="card">
-          <h2>Producto #1 — Piloto Triage Operativo</h2>
-          <p class="k">Implementación acotada para medir impacto rápido y mostrar orden real.</p>
+          <h2>Piloto Triage Operativo</h2>
+          <p class="k">Implementación rápida para instalar orden en tu servicio de atención en pocos días.</p>
           <ul>
             <li>
-              <div class="k">Canal</div>
-              <div class="v">1 canal: formulario web, webhook o email.</div>
+              <div class="k">Conexión de canal</div>
+              <div class="v">Se conecta un canal de entrada principal: formulario web, correo o WhatsApp.</div>
             </li>
             <li>
               <div class="k">Clasificación</div>
-              <div class="v">Categorías prácticas: agenda, urgencia, administrativa, resultados, reclamo.</div>
+              <div class="v">Se clasifican las consultas automáticamente según la intención del cliente.</div>
             </li>
             <li>
-              <div class="k">Reglas</div>
-              <div class="v">Prioridad + datos críticos + derivación según caso.</div>
+              <div class="k">Priorización</div>
+              <div class="v">Se priorizan urgencias para que el equipo atienda primero lo más importante.</div>
             </li>
             <li>
-              <div class="k">Acción</div>
-              <div class="v">Alerta al equipo + registro en Sheets/CRM/base operativa.</div>
+              <div class="k">Registro y trazabilidad</div>
+              <div class="v">Se registran todos los casos en un solo lugar con su estado visible.</div>
             </li>
             <li>
-              <div class="k">Operación</div>
-              <div class="v">Trazabilidad por caso + seguimiento inicial + mejora iterativa.</div>
+              <div class="k">Alertas activas</div>
+              <div class="v">Se envían alertas solo al personal correspondiente según el tipo de solicitud.</div>
             </li>
           </ul>
-          <p class="v v-mt-large"><strong>Entrega:</strong> workflow + contrato JSON + manual operativo + demo usable.
-          </p>
+          <p class="v v-mt-large"><strong>Entregables:</strong> Flujo configurado, sistema de captura probado y registro
+            funcionando.</p>
         </div>
 
         <div class="card">
-          <h2>Stack del v1</h2>
+          <h2>Resumen del servicio</h2>
           <div class="v-mt">
-            <div class="pill">n8n</div>
-            <div class="pill">Webhook</div>
-            <div class="pill">Reglas</div>
-            <div class="pill">Telegram</div>
-            <div class="pill">Google Sheets</div>
-            <div class="pill">JSON</div>
+            <div class="pill">Clasificación automática</div>
+            <div class="pill">Formularios web</div>
+            <div class="pill">Reglas de negocio</div>
+            <div class="pill">Alertas al equipo</div>
+            <div class="pill">Registro en planillas</div>
           </div>
           <div class="line"></div>
-          <h2 class="mt-0">Mini-caso (tipo)</h2>
+          <h2 class="mt-0">Antes y Después</h2>
           <ul>
             <li>
-              <div class="k">Antes</div>
-              <div class="v">Consultas dispersas, urgencias mezcladas con agenda y poco control del seguimiento.</div>
+              <div class="k">Antes de implementar</div>
+              <div class="v">Consultas mezcladas. Los casos urgentes se pierden entre preguntas simples, saturando a
+                quienes deben atender.</div>
             </li>
             <li>
-              <div class="k">Después</div>
-              <div class="v">Formulario o canal único, clasificación automática, alerta y registro visible.</div>
+              <div class="k">Impacto del piloto</div>
+              <div class="v">Orden inmediato. Cada caso llega filtrado, con prioridad marcada y asignado a quien debe
+                resolverlo.</div>
             </li>
             <li>
-              <div class="k">Impacto</div>
-              <div class="v">Menos pérdida de casos, menos improvisación y una operación más legible.</div>
+              <div class="k">Resultado operativo</div>
+              <div class="v">Menos desgaste de personal, menos casos perdidos y total control administrativo de tu
+                operación.</div>
             </li>
           </ul>
         </div>
@@ -820,17 +825,19 @@
 
       <section id="guardrails" class="three">
         <div class="card">
-          <h2>Guardrail #1</h2>
-          <p class="k">Si faltan datos clave, el caso no debería avanzar como si estuviera completo.</p>
-        </div>
-
-        <div class="card">
-          <h2>Guardrail #2</h2>
-          <p class="k">Si hay ambigüedad, el flujo puede pedir revisión humana antes de accionar.</p>
+          <h2>Validación de datos</h2>
+          <p class="k">Si faltan datos críticos, el sistema pide completarlos y no avanza automáticamente para evitar
+            desorden.</p>
         </div>
         <div class="card">
-          <h2>Guardrail #3</h2>
-          <p class="k">Salida estructurada: menos improvisación, menos folclor operativo y más registro útil.</p>
+          <h2>Revisión humana</h2>
+          <p class="k">Si hay ambigüedad o dudas con un texto, el caso no se ignora: se deriva a revisión humana
+            inmediatamente.</p>
+        </div>
+        <div class="card">
+          <h2>Registro útil</h2>
+          <p class="k">Cada caso queda registrado con trazabilidad. Información siempre clara y estandarizada para todo
+            el equipo.</p>
         </div>
       </section>
 
@@ -838,53 +845,55 @@
 
       <section id="contacto" class="two">
         <div class="card">
-          <h2>Contacto</h2>
-          <p class="k">La landing ya queda lista para captura directa y diagnóstico por WhatsApp.</p>
+          <h2>Agendar Diagnóstico</h2>
+          <p class="k">Revisemos juntos en una llamada de 15 minutos en qué podemos ayudarte a ordenar tu recepción.</p>
           <p class="v v-mt">
-            Email sugerido: <span class="accent">hola@parmux.com</span><br>
-            WhatsApp: <a class="accent" href="https://wa.me/56937803815" target="_blank" rel="noopener">+56 9 3780
-              3815</a>
+            Correo directo: <span class="accent">hola@parmux.com</span><br>
+            Contacto por WhatsApp: <a class="accent" href="https://wa.me/56937803815" target="_blank" rel="noopener">+56
+              9 3780 3815</a>
           </p>
           <div class="line"></div>
-          <p class="tiny">Antes de publicar: reemplaza la constante <code>WEBHOOK_URL</code> del script por tu webhook de
-            producción de n8n.</p>
+          <p class="tiny">Recordatorio: Actualiza la variable <code>WEBHOOK_URL</code> en el código antes de lanzar tu
+            demo a producción.</p>
         </div>
 
         <div class="card">
-          <h2>Checklist (20 min)</h2>
+          <h2>Para el diagnóstico prepárate con:</h2>
           <ul>
             <li>
-              <div class="k">Canal</div>
-              <div class="v">Formulario, email o webhook.</div>
+              <div class="k">Canal principal</div>
+              <div class="v">¿Por cuál canal recibes hoy el mayor volumen de consultas?</div>
             </li>
             <li>
-              <div class="k">Volumen</div>
-              <div class="v">Casos por día/semana y momentos de saturación.</div>
+              <div class="k">Casos semanales</div>
+              <div class="v">Una estimación de cuántas solicitudes o atenciones respondes por semana.</div>
             </li>
             <li>
-              <div class="k">Destino</div>
-              <div class="v">Sheets, CRM, ERP o ticketera.</div>
+              <div class="k">Registro ideal</div>
+              <div class="v">¿Dónde te gustaría tener anotado cada paciente o cliente activo?</div>
             </li>
             <li>
-              <div class="k">Dolor</div>
-              <div class="v">Demora, errores, pérdida de consultas, mala trazabilidad.</div>
+              <div class="k">El problema principal</div>
+              <div class="v">Identificar qué te hace perder más tiempo cada día.</div>
             </li>
           </ul>
         </div>
-        <a class="btn-outline" href="https://tally.so/r/lbNQ5p" target="_blank" rel="noopener">Detallar mi caso por
-          escrito (30s)</a>
+        <a class="btn btn-outline" href="https://tally.so/r/lbNQ5p" target="_blank" rel="noopener">Detallar mi caso por
+          escrito (30s de lectura)</a>
       </section>
 
       <footer>
-        <div>© <span id="y"></span> PARMUX · ParmuxLab</div>
-        <div style="margin-top:6px">Single-file <code>index.html</code> listo para publicar y conectar a n8n.</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>© <span id="y"></span> PARMUX · ParmuxLab</div>
+          <a href="/privacy.html" style="font-size: 11px; color: var(--muted); text-decoration: underline;">Política de Privacidad</a>
+        </div>
+        <div style="margin-top:6px">Triage y recepción operativa funcional. Despliegue de landing single-file asegurada en n8n endpoints.</div>
       </footer>
     </main>
   </div>
 
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
-
     const WEBHOOK_URL = 'https://TU-N8N-DOMINIO/webhook/parmux-v1-ingreso';
     const form = document.getElementById('parmux-form');
     const responseBox = document.getElementById('formResponse');
@@ -902,33 +911,31 @@
         source: 'web_form',
         client_name: form.client_name.value.trim(),
         client_phone: form.client_phone.value.trim(),
-        client_email: form.client_email.value.trim(),
-        patient_name: form.patient_name.value.trim(),
-        patient_type: form.patient_type.value.trim(),
-        request_type: form.request_type.value,
+        client_email: form.client_email ? form.client_email.value.trim() : "",
+        patient_name: form.patient_name ? form.patient_name.value.trim() : "",
+        patient_type: form.patient_type ? form.patient_type.value.trim() : "",
+        request_type: form.request_type ? form.request_type.value : "",
         message: form.message.value.trim()
       };
 
       if (!data.client_name || !data.client_phone || !data.message) {
-        setResponse('Completa nombre, teléfono y mensaje para enviar el caso.', 'error');
+        setResponse('Completa nombre, teléfono y mensaje.', 'error');
         return;
       }
 
       if (WEBHOOK_URL.includes('TU-N8N-DOMINIO')) {
-        setResponse('Falta configurar la URL del webhook de n8n en el archivo antes de publicar la demo.', 'error');
+        setResponse('Falta configurar la URL del webhook en el código.', 'error');
         return;
       }
 
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Enviando...';
+      submitBtn.textContent = 'Procesando...';
       setResponse('Procesando caso de prueba...', '');
 
       try {
         const res = await fetch(WEBHOOK_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
 
@@ -942,15 +949,23 @@
         }
 
         if (!res.ok || result.success === false) {
-          throw new Error(result.message || 'No se pudo procesar la solicitud.');
+          throw new Error('Error al conectar con el sistema. Intenta nuevamente.');
         }
 
-        const caseId = result.case_id ? ` ID: ${result.case_id}.` : '';
-        const category = result.category ? ` Categoría: ${result.category}.` : '';
-        setResponse(`Caso enviado correctamente.${caseId}${category} Revisa tu flujo para ver alerta y registro.`, 'success');
+        let successMessage = 'Caso enviado correctamente.';
+
+        if (result.intent) successMessage += `\nClasificación: ${result.intent}`;
+        if (result.priority) successMessage += `\nPrioridad: ${result.priority}`;
+        if (result.lead_status) successMessage += `\nEstado: ${result.lead_status}`;
+
+        if (result.reply_text) {
+          successMessage += `\nRespuesta inicial: ${result.reply_text}`;
+        }
+
+        setResponse(successMessage, 'success');
         form.reset();
       } catch (error) {
-        setResponse(error.message || 'Error de conexión con el webhook.', 'error');
+        setResponse('Error al conectar con el sistema. Intenta nuevamente.', 'error');
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Enviar caso de prueba';
