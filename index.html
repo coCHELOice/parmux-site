@@ -1,977 +1,242 @@
 <!doctype html>
-<html lang="es-CL">
-
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PARMUX — ParmuxLab</title>
-  <meta name="description"
-    content="PARMUX: Operational AI para clínicas y operaciones con triage, clasificación, alertas y trazabilidad." />
-  <meta name="theme-color" content="#0b0b0c" />
-  <meta property="og:title" content="PARMUX — Triage Operativo y Automatización" />
-  <meta property="og:description"
-    content="Operational AI que ordena solicitudes, las clasifica, las deriva y deja trazabilidad." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://parmux.com" />
-  <meta property="og:image" content="https://parmux.com/og-image.jpg" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="PARMUX — Triage Operativo" />
-  <meta name="twitter:description" content="Operational AI que ordena tu entrada operativa." />
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0b0b0c;
-      --panel: rgba(255, 255, 255, .03);
-      --line: rgba(255, 255, 255, .10);
-      --text: rgba(255, 255, 255, .92);
-      --muted: rgba(255, 255, 255, .62);
-      --accent: #6ee7ff;
-      --accent2: #a78bfa;
-      --ok: #8ef0a4;
-      --warn: #ffd66e;
-      --danger: #ff8f8f;
-    }
-
-    * {
-      box-sizing: border-box
-    }
-
-    html {
-      scroll-behavior: smooth
-    }
-
-    html,
-    body {
-      height: 100%
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-      background: radial-gradient(900px 520px at 18% 10%, rgba(110, 231, 255, .10), transparent 56%), radial-gradient(900px 520px at 82% 20%, rgba(167, 139, 250, .08), transparent 58%), var(--bg);
-      color: var(--text);
-      letter-spacing: .1px;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-      transition: all 0.2s ease
-    }
-
-    a:focus-visible,
-    button:focus-visible,
-    input:focus-visible,
-    textarea:focus-visible,
-    select:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-
-    .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 28px 18px 72px
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px
-    }
-
-    .mark {
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, .10);
-      background: radial-gradient(circle at 28% 28%, rgba(110, 231, 255, .95) 0 2px, transparent 3px), radial-gradient(circle at 72% 28%, rgba(167, 139, 250, .95) 0 2px, transparent 3px), radial-gradient(circle at 28% 72%, rgba(167, 139, 250, .95) 0 2px, transparent 3px), radial-gradient(circle at 72% 72%, rgba(110, 231, 255, .95) 0 2px, transparent 3px), linear-gradient(90deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .18)) 50% 28%/44% 1px no-repeat, linear-gradient(90deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .18)) 50% 72%/44% 1px no-repeat, linear-gradient(180deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .18)) 28% 50%/1px 44% no-repeat, linear-gradient(180deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .18)) 72% 50%/1px 44% no-repeat, radial-gradient(120% 120% at 20% 10%, rgba(110, 231, 255, .08), transparent 55%), radial-gradient(120% 120% at 80% 20%, rgba(167, 139, 250, .06), transparent 55%);
-    }
-
-    .brandname {
-      font-weight: 860;
-      font-size: 14px;
-      letter-spacing: .08em
-    }
-
-    nav {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap
-    }
-
-    nav a {
-      font-size: 12px;
-      color: var(--muted)
-    }
-
-    nav a:hover {
-      color: var(--text)
-    }
-
-    .hero {
-      padding: 62px 0 18px
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 58px;
-      line-height: 1.02;
-      letter-spacing: -1.3px
-    }
-
-    @media (max-width:720px) {
-      h1 {
-        font-size: 44px
-      }
-    }
-
-    .subbrand {
-      margin-top: 10px;
-      font-size: 13px;
-      color: var(--muted);
-      letter-spacing: .18em;
-      text-transform: uppercase
-    }
-
-    .tag {
-      margin-top: 14px;
-      font-size: 16px;
-      color: var(--muted);
-      max-width: 760px
-    }
-
-    .proof {
-      margin-top: 16px;
-      font-size: 12px;
-      color: var(--muted);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 9px 12px;
-      display: inline-flex;
-      gap: 10px;
-      align-items: center;
-      background: var(--panel);
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(110, 231, 255, .10)
-    }
-
-    .cta {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 18px
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 11px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      font-weight: 750;
-      font-size: 13px;
-      transition: all 0.25s ease;
-      cursor: pointer;
-    }
-
-    .btn.primary {
-      border-color: rgba(110, 231, 255, .26);
-      background: linear-gradient(135deg, rgba(110, 231, 255, .18), rgba(167, 139, 250, .10));
-    }
-
-    .btn:hover,
-    .btn-outline:hover {
-      transform: translateY(-1px)
-    }
-
-    .btn.btn-outline {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, .15);
-    }
-
-    .btn.btn-outline:hover {
-      background: rgba(255, 255, 255, .05);
-      border-color: rgba(255, 255, 255, .30);
-    }
-
-    .link.subtle {
-      display: inline-block;
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--muted)
-    }
-
-    .link.subtle:hover {
-      color: var(--text)
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 22px
-    }
-
-    @media (max-width:860px) {
-      .grid {
-        grid-template-columns: 1fr
-      }
-    }
-
-    .card {
-      border: 1px solid var(--line);
-      background: var(--panel);
-      border-radius: 18px;
-      padding: 16px;
-    }
-
-    .card h2 {
-      margin: 0 0 8px;
-      font-size: 14px;
-      letter-spacing: .2px
-    }
-
-    .card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px
-    }
-
-    .line {
-      height: 1px;
-      background: var(--line);
-      margin: 22px 0
-    }
-
-    .two {
-      display: grid;
-      grid-template-columns: 1.12fr .88fr;
-      gap: 12px
-    }
-
-    .three {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px
-    }
-
-    @media (max-width:860px) {
-
-      .two,
-      .three {
-        grid-template-columns: 1fr
-      }
-    }
-
-    .k {
-      font-size: 12px;
-      color: var(--muted)
-    }
-
-    .v {
-      margin-top: 4px;
-      font-size: 13px
-    }
-
-    ul {
-      margin: 0;
-      padding: 0;
-      list-style: none
-    }
-
-    li {
-      padding: 10px 0;
-      border-top: 1px solid rgba(255, 255, 255, .08)
-    }
-
-    li:first-child {
-      border-top: 0
-    }
-
-    .accent {
-      color: var(--accent)
-    }
-
-    .pill {
-      display: inline-block;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, .10);
-      color: var(--muted);
-      font-size: 12px;
-      margin: 6px 6px 0 0;
-      background: rgba(255, 255, 255, .02)
-    }
-
-    .demo-card {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .demo-card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(110, 231, 255, .02), rgba(167, 139, 250, .04));
-      pointer-events: none;
-    }
-
-    .micro-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    @media (max-width:860px) {
-      .micro-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    .micro {
-      padding: 10px;
-      border: 1px solid rgba(255, 255, 255, .08);
-      border-radius: 14px;
-      background: rgba(255, 255, 255, .02);
-      min-height: 84px;
-    }
-
-    .micro strong {
-      display: block;
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
-
-    .micro span {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-
-    .form-card {
-      padding: 18px;
-    }
-
-    .form-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 14px;
-    }
-
-    .form-head p {
-      max-width: 560px;
-    }
-
-    .form-note {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 10px;
-    }
-
-    form {
-      margin-top: 8px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    @media (max-width:860px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .field label {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    input,
-    textarea,
-    select {
-      width: 100%;
-      padding: 12px 13px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, .10);
-      background: rgba(255, 255, 255, .02);
-      color: var(--text);
-      font: inherit;
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 120px;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: rgba(255, 255, 255, .36);
-    }
-
-    .form-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-
-    .response-box {
-      margin-top: 12px;
-      padding: 12px 13px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, .10);
-      background: rgba(255, 255, 255, .02);
-      font-size: 13px;
-      color: var(--muted);
-      display: none;
-      white-space: pre-wrap;
-    }
-
-    .response-box.is-visible {
-      display: block;
-    }
-
-    .response-box.success {
-      border-color: rgba(142, 240, 164, .35);
-      color: var(--ok);
-      background: rgba(142, 240, 164, .05);
-    }
-
-    .response-box.error {
-      border-color: rgba(255, 143, 143, .35);
-      color: var(--danger);
-      background: rgba(255, 143, 143, .05);
-    }
-
-    .tiny {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    footer {
-      margin-top: 34px;
-      color: var(--muted);
-      font-size: 12px
-    }
-
-    code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: .95em
-    }
-
-    .card ul {
-      margin-top: 10px;
-    }
-
-    .card .line {
-      margin: 14px 0;
-    }
-
-    .card .v-mt {
-      margin-top: 10px;
-    }
-
-    .card .v-mt-large {
-      margin-top: 12px;
-    }
-
-    .card h2.mt-0 {
-      margin-top: 0;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .animate-fade-in {
-      animation: fadeInUp 0.6s ease-out forwards;
-      opacity: 0;
-    }
-
-    .delay-1 {
-      animation-delay: 0.1s;
-    }
-
-    .delay-2 {
-      animation-delay: 0.2s;
-    }
-
-    .delay-3 {
-      animation-delay: 0.3s;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="mark" aria-hidden="true"></div>
-        <div class="brandname">PARMUX</div>
-      </div>
-      <nav>
-        <a href="#clave">Clave</a>
-        <a href="#demo">Demo</a>
-        <a href="#producto">Producto</a>
-        <a href="#contacto">Contacto</a>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Parmux disena, desarrolla e integra soluciones tecnologicas para automatizar operaciones empresariales."
+    />
+    <meta name="theme-color" content="#f8fafc" />
+    <title>Parmux | Automatizacion e integracion tecnologica</title>
+    <link rel="icon" href="assets/parmux-logo-black.png" type="image/png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Saltar al contenido</a>
+
+    <header class="site-header" data-elevate>
+      <nav class="nav-shell" aria-label="Principal">
+        <a class="brand" href="#top" aria-label="Parmux inicio">
+          <img src="assets/parmux-logo-black.png" alt="" width="42" height="42" />
+          <span>PARMUX.</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span>
+          <span class="sr-only">Abrir menu</span>
+        </button>
+        <div class="nav-links" id="nav-links">
+          <a href="#servicios">Servicios</a>
+          <a href="#flujos">Soluciones</a>
+          <a href="#metodologia">Casos de uso</a>
+          <a href="#contacto">Contacto</a>
+        </div>
+        <a class="nav-cta" href="https://wa.me/56991020231?text=Hola%20Parmux%2C%20quiero%20conversar%20sobre%20un%20proyecto" target="_blank" rel="noreferrer">
+          Agendar consulta
+        </a>
       </nav>
     </header>
 
-    <main>
-      <section class="hero animate-fade-in">
-        <h1>PARMUX</h1>
-        <div class="subbrand">ParmuxLab</div>
-        <p class="tag">
-          PARMUX ordena mensajes de clientes, clasifica consultas y prioriza urgencias para que clínicas y negocios de
-          atención no pierdan tiempo ni solicitudes. Un <span class="accent">Triage Operativo</span> para tu negocio.
-        </p>
-
-        <div class="proof"><span class="dot"></span> Piloto 7–14 días · Clasificación de consultas · Alertas y registro
-          desde el primer día</div>
-
-        <div class="cta animate-fade-in delay-1">
-          <a class="btn primary" href="https://wa.me/56937803815" target="_blank" rel="noopener">Diagnóstico por
-            WhatsApp (15 min)</a>
-          <a class="btn" href="#demo">Ver demo operativa</a>
-        </div>
-        <a class="link subtle" href="#demo">Prefiero dejar un caso de prueba (30s)</a>
-
-        <div class="grid animate-fade-in delay-2">
-          <div class="card">
-            <h2>Entrada desordenada</h2>
-            <p>Dejas de revisar mensajes a mano. El sistema recibe y ordena cada solicitud por ti.</p>
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="hero-grid-bg" aria-hidden="true"></div>
+        <div class="page-shell hero-grid">
+          <div class="hero-copy reveal">
+            <h1>Ingenieria<br />para<br />automatizar.</h1>
+            <p>
+              Optimizamos operaciones con tecnologia avanzada, orquestacion de flujos e integraciones a medida. Creamos soluciones de IA y software para lograr eficiencia, control y escalabilidad.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-dark" href="#servicios">Explorar servicios</a>
+              <a class="button button-light" href="#flujos">Descubrir proceso</a>
+            </div>
           </div>
-          <div class="card">
-            <h2>Priorización útil</h2>
-            <p>Distingue urgencias de preguntas generales. Deriva rápidamente a la persona responsable.</p>
-          </div>
-          <div class="card">
-            <h2>Seguimiento visible</h2>
-            <p>Cada consulta genera un registro claro. Tendrás control y trazabilidad en todo momento.</p>
+
+          <div class="abstract-core metallic-construct reveal" aria-hidden="true">
+            <div class="core-glow"></div>
+            <div class="kinetic-object">
+              <div class="orbit-plane orbit-plane-silver"><span class="orbit-ring"></span></div>
+              <div class="orbit-plane orbit-plane-bronze"><span class="orbit-ring"></span></div>
+              <div class="orbit-plane orbit-plane-dark"><span class="orbit-ring"></span></div>
+              <div class="orbit-plane orbit-plane-light"><span class="orbit-ring"></span></div>
+              <div class="facet-cloud">
+                <span class="facet facet-one"></span>
+                <span class="facet facet-two"></span>
+                <span class="facet facet-three"></span>
+                <span class="facet facet-four"></span>
+                <span class="facet facet-five"></span>
+                <span class="facet facet-six"></span>
+                <span class="facet facet-seven"></span>
+              </div>
+              <div class="core-mark"><img src="assets/parmux-logo-black.png" alt="" /></div>
+            </div>
           </div>
         </div>
       </section>
 
-      <div class="line"></div>
-
-      <section id="clave" class="two">
-        <div class="card">
-          <h2>Lo clave</h2>
-          <p class="k">Todo lo que necesitas saber sobre nuestra intervención inicial.</p>
-          <ul>
-            <li>
-              <div class="k">Qué incluye el piloto</div>
-              <div class="v"><strong>7 a 14 días</strong> de implementación: configuración de tu canal de entrada,
-                reglas de clasificación, sistema de alertas y registro de casos.</div>
-            </li>
-            <li>
-              <div class="k">Resultado operativo</div>
-              <div class="v">Una recepción ordenada. Disminución del tiempo de respuesta y estado claro para cada
-                consulta que ingresa.</div>
-            </li>
-            <li>
-              <div class="k">Alcance inicial</div>
-              <div class="v">Nos enfocamos primero en 1 solo canal de interacción y 1 único destino de registro para
-                asegurar resultados rápidos.</div>
-            </li>
-          </ul>
-        </div>
-
-        <div class="card">
-          <h2>Mini-caso (clínicas)</h2>
-          <ul>
-            <li>
-              <div class="k">Antes</div>
-              <div class="v">Consultas mezcladas entre WhatsApp, teléfono y formularios. Las urgencias se pierden y la
-                recepción se satura.</div>
-            </li>
-            <li>
-              <div class="k">Después</div>
-              <div class="v">El sistema recibe, clasifica, prioriza y registra cada caso automáticamente. Se alerta al
-                equipo solo cuando es necesario.</div>
-            </li>
-            <li>
-              <div class="k">Indicador de éxito</div>
-              <div class="v">Menos tiempos muertos y fin a las consultas no respondidas. Trazabilidad completa desde el
-                primer día.</div>
-            </li>
-          </ul>
-          <div class="line"></div>
-          <p class="v"><strong>Precio de referencia:</strong> piloto desde <span class="accent">USD 900</span> según el
-            canal y volumen de casos.</p>
-        </div>
-      </section>
-
-      <div class="line"></div>
-
-      <section id="demo" class="two">
-        <div class="card demo-card form-card">
-          <div class="form-head">
-            <div>
-              <h2>Demo Triage Operativo</h2>
-              <p class="k">Deja un caso de prueba. El sistema lo recibe, lo clasifica y lo envía a tu flujo operativo.
-              </p>
-            </div>
-            <div class="pill">Demostración en vivo</div>
+      <section class="section section-soft" id="servicios">
+        <div class="page-shell">
+          <div class="section-heading reveal">
+            <p class="eyebrow">Ingenieria de flujos</p>
+            <h2>Servicios para conectar, automatizar y escalar operaciones.</h2>
+            <p>
+              Parmux combina desarrollo, integracion, automatizacion e inteligencia aplicada para construir sistemas sobrios, mantenibles y orientados al negocio.
+            </p>
           </div>
 
-          <form id="parmux-form" novalidate>
-            <div class="form-grid">
-              <div class="field full">
-                <label for="client_name">Nombre completo</label>
-                <input id="client_name" name="client_name" type="text" placeholder="Ej: Ana Soto" required>
+          <div class="bento-grid">
+            <article class="bento-card bento-large reveal">
+              <div class="card-icon">01</div>
+              <div>
+                <h3>Orquestacion de sistemas</h3>
+                <p>Conectamos CRM, ERP, APIs, planillas y plataformas internas para que la informacion fluya sin doble digitacion.</p>
               </div>
-              <div class="field full">
-                <label for="client_phone">Teléfono de contacto</label>
-                <input id="client_phone" name="client_phone" type="tel" placeholder="+56 9 1234 5678" required>
-              </div>
-              <div class="field full">
-                <label for="message">Mensaje, caso o solicitud</label>
-                <textarea id="message" name="message"
-                  placeholder="Ej: Quiero agendar una hora para mañana / Mi perro está con vómitos urgentes / Necesito resultados del mes."
-                  required></textarea>
-              </div>
+            </article>
 
-              <div class="field full"
-                style="margin-top: 10px; border-top: 1px dashed rgba(255, 255, 255, .15); padding-top: 14px;">
-                <label
-                  style="text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; font-size: 11px; display: block; margin-bottom: 4px;">Datos
-                  Adicionales (Opcional)</label>
+            <article class="bento-card bento-dark reveal">
+              <div class="card-icon">02</div>
+              <div>
+                <h3>Automatizacion activa</h3>
+                <p>Flujos que ejecutan tareas, derivan casos, notifican estados y dejan trazabilidad operacional.</p>
               </div>
+            </article>
 
-              <div class="field">
-                <label for="client_email">Correo electrónico</label>
-                <input id="client_email" name="client_email" type="email" placeholder="nombre@correo.cl">
+            <article class="bento-card reveal">
+              <div class="card-icon">03</div>
+              <div>
+                <h3>APIs y modulos custom</h3>
+                <p>Endpoints, microservicios y componentes a medida para complementar sistemas existentes.</p>
               </div>
-              <div class="field">
-                <label for="request_type">Clasificación previa (Sugerida)</label>
-                <select id="request_type" name="request_type">
-                  <option value="consulta">Consulta estándar</option>
-                  <option value="agenda">Agendamiento</option>
-                  <option value="urgencia">Atención urgente</option>
-                  <option value="administrativa">Gestión administrativa</option>
-                  <option value="resultados">Envío de resultados</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="patient_name">Nombre de involucrado/mascota</label>
-                <input id="patient_name" name="patient_name" type="text" placeholder="Ej: Luna">
-              </div>
-              <div class="field">
-                <label for="patient_type">Categoría del involucrado</label>
-                <input id="patient_type" name="patient_type" type="text" placeholder="Ej: Humano, Felino...">
-              </div>
-            </div>
+            </article>
 
-            <div class="form-actions">
-              <button class="btn primary" type="submit" id="submitBtn">Enviar caso de prueba</button>
-            </div>
-
-            <div class="response-box" id="formResponse" aria-live="polite"></div>
-            <div class="form-note">Esta simulación verifica captura, clasificación, prioridad y alerta.</div>
-          </form>
+            <article class="bento-card bento-wide reveal">
+              <div class="watermark">API</div>
+              <div class="card-icon">04</div>
+              <div>
+                <h3>Integracion nativa</h3>
+                <p>Sincronizacion bidireccional, transformacion de datos en transito y capas de integracion que no obligan a reemplazar todo.</p>
+              </div>
+            </article>
+          </div>
         </div>
+      </section>
 
-        <div class="card">
-          <h2>El flujo detrás del sistema</h2>
-          <div class="micro-grid">
-            <div class="micro">
-              <strong>1. Captura</strong>
-              <span>Recibe el mensaje desde tu formulario o canal.</span>
+      <section class="section control-section" id="flujos">
+        <span class="anchor-alias" id="integraciones" aria-hidden="true"></span>
+        <div class="page-shell control-grid">
+          <div class="section-heading reveal">
+            <p class="eyebrow">Mesa de mando</p>
+            <h2>Una forma sobria de demostrar control e inteligencia operacional.</h2>
+            <p>
+              Ajusta las variables de la operacion y observa como se recalculan carga, autonomia y riesgo. La interaccion es deliberada: control ejecutivo, no juego visual.
+            </p>
+          </div>
+
+          <div class="command-board reveal" aria-label="Mesa de mando interactiva Parmux">
+            <div class="control-panel">
+              <div class="panel-head">
+                <span>Orquestador IA</span>
+                <b data-control-state>Asistido</b>
+              </div>
+              <label>
+                <span>Autonomia operativa <b data-control-readout="automation">68%</b></span>
+                <input type="range" min="20" max="100" value="68" data-ai-control="automation" aria-label="Autonomia operativa" />
+              </label>
+              <label>
+                <span>Presion de demanda <b data-control-readout="load">54%</b></span>
+                <input type="range" min="10" max="100" value="54" data-ai-control="load" aria-label="Presion de demanda" />
+              </label>
+              <label>
+                <span>Confianza del modelo <b data-control-readout="confidence">81%</b></span>
+                <input type="range" min="35" max="99" value="81" data-ai-control="confidence" aria-label="Confianza del modelo" />
+              </label>
+              <button type="button" data-ai-optimize>Ejecutar optimizacion</button>
             </div>
-            <div class="micro">
-              <strong>2. Clasifica</strong>
-              <span>Detecta de qué tipo de consulta se trata.</span>
-            </div>
-            <div class="micro">
-              <strong>3. Prioriza</strong>
-              <span>Determina urgencia para alertar al equipo.</span>
-            </div>
-            <div class="micro">
-              <strong>4. Registra</strong>
-              <span>Guarda el caso en una base para su seguimiento.</span>
+
+            <div class="insight-panel">
+              <div class="metrics-row">
+                <span><b data-dashboard-metric="velocity">66%</b> Flujo</span>
+                <span><b data-dashboard-metric="ai">74%</b> IA</span>
+                <span><b data-dashboard-metric="risk">Medio</b> Riesgo</span>
+              </div>
+              <svg class="adaptive-chart" viewBox="0 0 420 150" preserveAspectRatio="none" aria-hidden="true">
+                <path data-chart-secondary d="M8 118 C72 92 104 116 168 82 S270 74 334 64 376 54 412 48" />
+                <path data-chart-main d="M8 108 C74 52 112 122 176 76 S272 42 334 76 384 38 412 32" />
+              </svg>
+              <p data-control-insight>El dashboard recalcula flujo, riesgo y carga al mover cada control.</p>
+              <div class="flow-status">
+                <span data-flow-badge>Auto 68%</span>
+                <i></i>
+                <span>Operacion sincronizada</span>
+              </div>
             </div>
           </div>
-          <div class="line"></div>
-          <ul>
-            <li>
-              <div class="k">Reglas de negocio</div>
-              <div class="v">Clasificamos cada contacto siguiendo tus indicaciones: agendamiento, urgencias,
-                información, etc.</div>
-            </li>
-            <li>
-              <div class="k">Destino de la información</div>
-              <div class="v">Enviamos las notificaciones a tu teléfono o correo y armamos una base de control en Google
-                Sheets o tu sistema.</div>
-            </li>
-            <li>
-              <div class="k">Beneficio para el equipo</div>
-              <div class="v">Tu equipo deja de revisar listas interminables de mensajes buscando urgencias perdidas.
-              </div>
-            </li>
-          </ul>
         </div>
       </section>
 
-      <div class="line"></div>
-
-      <section id="producto" class="two">
-        <div class="card">
-          <h2>Piloto Triage Operativo</h2>
-          <p class="k">Implementación rápida para instalar orden en tu servicio de atención en pocos días.</p>
-          <ul>
-            <li>
-              <div class="k">Conexión de canal</div>
-              <div class="v">Se conecta un canal de entrada principal: formulario web, correo o WhatsApp.</div>
-            </li>
-            <li>
-              <div class="k">Clasificación</div>
-              <div class="v">Se clasifican las consultas automáticamente según la intención del cliente.</div>
-            </li>
-            <li>
-              <div class="k">Priorización</div>
-              <div class="v">Se priorizan urgencias para que el equipo atienda primero lo más importante.</div>
-            </li>
-            <li>
-              <div class="k">Registro y trazabilidad</div>
-              <div class="v">Se registran todos los casos en un solo lugar con su estado visible.</div>
-            </li>
-            <li>
-              <div class="k">Alertas activas</div>
-              <div class="v">Se envían alertas solo al personal correspondiente según el tipo de solicitud.</div>
-            </li>
-          </ul>
-          <p class="v v-mt-large"><strong>Entregables:</strong> Flujo configurado, sistema de captura probado y registro
-            funcionando.</p>
-        </div>
-
-        <div class="card">
-          <h2>Resumen del servicio</h2>
-          <div class="v-mt">
-            <div class="pill">Clasificación automática</div>
-            <div class="pill">Formularios web</div>
-            <div class="pill">Reglas de negocio</div>
-            <div class="pill">Alertas al equipo</div>
-            <div class="pill">Registro en planillas</div>
+      <section class="section section-light" id="metodologia">
+        <div class="page-shell">
+          <div class="section-heading reveal">
+            <p class="eyebrow">Metodologia</p>
+            <h2>Implementaciones acotadas, visibles y mantenibles.</h2>
           </div>
-          <div class="line"></div>
-          <h2 class="mt-0">Antes y Después</h2>
-          <ul>
-            <li>
-              <div class="k">Antes de implementar</div>
-              <div class="v">Consultas mezcladas. Los casos urgentes se pierden entre preguntas simples, saturando a
-                quienes deben atender.</div>
-            </li>
-            <li>
-              <div class="k">Impacto del piloto</div>
-              <div class="v">Orden inmediato. Cada caso llega filtrado, con prioridad marcada y asignado a quien debe
-                resolverlo.</div>
-            </li>
-            <li>
-              <div class="k">Resultado operativo</div>
-              <div class="v">Menos desgaste de personal, menos casos perdidos y total control administrativo de tu
-                operación.</div>
-            </li>
-          </ul>
+          <div class="method-grid">
+            <article class="method-card reveal">
+              <span>01</span>
+              <h3>Levantamiento</h3>
+              <p>Mapeamos usuarios, sistemas, entradas, reglas y puntos de friccion.</p>
+            </article>
+            <article class="method-card reveal">
+              <span>02</span>
+              <h3>Prototipo</h3>
+              <p>Definimos una solucion verificable antes de escalar implementacion.</p>
+            </article>
+            <article class="method-card reveal">
+              <span>03</span>
+              <h3>Integracion</h3>
+              <p>Conectamos datos, APIs y automatizaciones con trazabilidad.</p>
+            </article>
+            <article class="method-card reveal">
+              <span>04</span>
+              <h3>Evolucion</h3>
+              <p>Mantencion, soporte y mejora continua segun uso real.</p>
+            </article>
+          </div>
         </div>
       </section>
 
-      <div class="line"></div>
-
-      <section id="guardrails" class="three">
-        <div class="card">
-          <h2>Validación de datos</h2>
-          <p class="k">Si faltan datos críticos, el sistema pide completarlos y no avanza automáticamente para evitar
-            desorden.</p>
-        </div>
-        <div class="card">
-          <h2>Revisión humana</h2>
-          <p class="k">Si hay ambigüedad o dudas con un texto, el caso no se ignora: se deriva a revisión humana
-            inmediatamente.</p>
-        </div>
-        <div class="card">
-          <h2>Registro útil</h2>
-          <p class="k">Cada caso queda registrado con trazabilidad. Información siempre clara y estandarizada para todo
-            el equipo.</p>
+      <section class="section contact-section" id="contacto">
+        <div class="page-shell contact-grid">
+          <div class="reveal">
+            <p class="eyebrow">Contacto</p>
+            <h2>Conversemos sobre el siguiente sistema que tu empresa necesita conectar.</h2>
+            <p>Agenda una conversacion para revisar si conviene una app, una integracion, una automatizacion o una combinacion de las tres.</p>
+          </div>
+          <address class="contact-card reveal">
+            <img src="assets/parmux-logo-black.png" alt="" />
+            <strong>Parmux</strong>
+            <a href="tel:+56991020231">+56 9 9102 0231</a>
+            <a href="mailto:marcelo@parmux.com">marcelo@parmux.com</a>
+            <a href="https://parmux.com">parmux.com</a>
+            <span>Vina del Mar, Chile</span>
+          </address>
         </div>
       </section>
-
-      <div class="line"></div>
-
-      <section id="contacto" class="two">
-        <div class="card">
-          <h2>Agendar Diagnóstico</h2>
-          <p class="k">Revisemos juntos en una llamada de 15 minutos en qué podemos ayudarte a ordenar tu recepción.</p>
-          <p class="v v-mt">
-            Correo directo: <span class="accent">hola@parmux.com</span><br>
-            Contacto por WhatsApp: <a class="accent" href="https://wa.me/56937803815" target="_blank" rel="noopener">+56
-              9 3780 3815</a>
-          </p>
-          <div class="line"></div>
-          <p class="tiny">Recordatorio: Actualiza la variable <code>WEBHOOK_URL</code> en el código antes de lanzar tu
-            demo a producción.</p>
-        </div>
-
-        <div class="card">
-          <h2>Para el diagnóstico prepárate con:</h2>
-          <ul>
-            <li>
-              <div class="k">Canal principal</div>
-              <div class="v">¿Por cuál canal recibes hoy el mayor volumen de consultas?</div>
-            </li>
-            <li>
-              <div class="k">Casos semanales</div>
-              <div class="v">Una estimación de cuántas solicitudes o atenciones respondes por semana.</div>
-            </li>
-            <li>
-              <div class="k">Registro ideal</div>
-              <div class="v">¿Dónde te gustaría tener anotado cada paciente o cliente activo?</div>
-            </li>
-            <li>
-              <div class="k">El problema principal</div>
-              <div class="v">Identificar qué te hace perder más tiempo cada día.</div>
-            </li>
-          </ul>
-        </div>
-        <a class="btn btn-outline" href="https://tally.so/r/lbNQ5p" target="_blank" rel="noopener">Detallar mi caso por
-          escrito (30s de lectura)</a>
-      </section>
-
-      <footer>
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-          <div>© <span id="y"></span> PARMUX · ParmuxLab</div>
-          <a href="/privacy.html" style="font-size: 11px; color: var(--muted); text-decoration: underline;">Política de Privacidad</a>
-        </div>
-        <div style="margin-top:6px">Triage y recepción operativa funcional. Despliegue de landing single-file asegurada en n8n endpoints.</div>
-      </footer>
     </main>
-  </div>
 
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-    const WEBHOOK_URL = 'https://TU-N8N-DOMINIO/webhook/parmux-v1-ingreso';
-    const form = document.getElementById('parmux-form');
-    const responseBox = document.getElementById('formResponse');
-    const submitBtn = document.getElementById('submitBtn');
+    <footer class="site-footer">
+      <div class="page-shell">
+        <span>&copy; 2026 PARMUX. Todos los derechos reservados.</span>
+        <nav class="footer-links" aria-label="Legal">
+          <a href="legal/privacidad.html">Privacidad</a>
+          <a href="legal/terminos.html">Terminos</a>
+          <a href="legal/cookies.html">Cookies</a>
+          <a href="legal/eliminacion-datos.html">Eliminar datos</a>
+          <a href="#top">Volver arriba</a>
+        </nav>
+      </div>
+    </footer>
 
-    function setResponse(message, type) {
-      responseBox.className = 'response-box is-visible ' + (type || '');
-      responseBox.textContent = message;
-    }
-
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      const data = {
-        source: 'web_form',
-        client_name: form.client_name.value.trim(),
-        client_phone: form.client_phone.value.trim(),
-        client_email: form.client_email ? form.client_email.value.trim() : "",
-        patient_name: form.patient_name ? form.patient_name.value.trim() : "",
-        patient_type: form.patient_type ? form.patient_type.value.trim() : "",
-        request_type: form.request_type ? form.request_type.value : "",
-        message: form.message.value.trim()
-      };
-
-      if (!data.client_name || !data.client_phone || !data.message) {
-        setResponse('Completa nombre, teléfono y mensaje.', 'error');
-        return;
-      }
-
-      if (WEBHOOK_URL.includes('TU-N8N-DOMINIO')) {
-        setResponse('Falta configurar la URL del webhook en el código.', 'error');
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Procesando...';
-      setResponse('Procesando caso de prueba...', '');
-
-      try {
-        const res = await fetch(WEBHOOK_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        const raw = await res.text();
-        let result = {};
-
-        try {
-          result = raw ? JSON.parse(raw) : {};
-        } catch (_) {
-          result = { success: res.ok, message: raw };
-        }
-
-        if (!res.ok || result.success === false) {
-          throw new Error('Error al conectar con el sistema. Intenta nuevamente.');
-        }
-
-        let successMessage = 'Caso enviado correctamente.';
-
-        if (result.intent) successMessage += `\nClasificación: ${result.intent}`;
-        if (result.priority) successMessage += `\nPrioridad: ${result.priority}`;
-        if (result.lead_status) successMessage += `\nEstado: ${result.lead_status}`;
-
-        if (result.reply_text) {
-          successMessage += `\nRespuesta inicial: ${result.reply_text}`;
-        }
-
-        setResponse(successMessage, 'success');
-        form.reset();
-      } catch (error) {
-        setResponse('Error al conectar con el sistema. Intenta nuevamente.', 'error');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Enviar caso de prueba';
-      }
-    });
-  </script>
-</body>
-
+    <script src="script.js"></script>
+  </body>
 </html>
