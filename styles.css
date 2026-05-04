@@ -905,6 +905,37 @@ h3 {
   background: #fff;
 }
 
+.hero-video-shell {
+  min-height: 650px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  justify-self: stretch;
+  overflow: visible;
+  transform: translateX(170px);
+}
+
+.hero-video-shell::before {
+  content: "";
+  position: absolute;
+  width: min(92%, 620px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(15, 23, 42, 0.1), transparent 66%);
+  filter: blur(22px);
+}
+
+.hero-video {
+  position: relative;
+  z-index: 1;
+  width: min(112%, 670px);
+  max-width: none;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 34px 44px rgba(15, 23, 42, 0.16));
+}
+
 .metallic-construct {
   min-height: 650px;
   justify-self: stretch;
@@ -1157,6 +1188,17 @@ h3 {
     transform: none;
   }
 
+  .hero-video-shell {
+    min-height: 500px;
+    width: min(100%, 580px);
+    justify-self: center;
+    transform: none;
+  }
+
+  .hero-video {
+    width: 100%;
+  }
+
   .ring-one { width: 340px; height: 340px; }
   .ring-two { width: 255px; height: 255px; }
   .ring-three { width: 170px; height: 170px; }
@@ -1240,6 +1282,11 @@ h3 {
   .metallic-construct {
     min-height: 360px;
     max-width: 360px;
+  }
+
+  .hero-video-shell {
+    min-height: 390px;
+    max-width: 390px;
   }
 
   .construct-ring {
