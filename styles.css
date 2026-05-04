@@ -715,11 +715,23 @@ h3 {
   box-shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
 }
 
-.legal-panel span {
+.legal-panel strong {
   color: #cbd5e1;
   font-size: 13px;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.legal-panel ul {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legal-panel li {
+  margin: 0;
 }
 
 .legal-panel a {
@@ -730,7 +742,7 @@ h3 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.legal-panel a:last-child {
+.legal-panel li:last-child a {
   border-bottom: 0;
 }
 
