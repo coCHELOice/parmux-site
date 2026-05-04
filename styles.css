@@ -666,6 +666,7 @@ h3 {
 }
 
 .contact-section {
+  padding-bottom: 113px;
   background: #f8fafc;
 }
 
@@ -1364,6 +1365,10 @@ h3 {
 
   .section {
     padding: 82px 0;
+  }
+
+  .contact-section {
+    padding-bottom: 77px;
   }
 
   .bento-grid,
