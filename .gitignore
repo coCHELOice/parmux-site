@@ -1,0 +1,6 @@
+# Local workspace and discarded prototypes. These are not production assets.
+*.code-workspace
+index_proto.tsx
+parmux_landing_premium_preview*.jsx
+test-ebhook.html
+proposals/elegant-directions/

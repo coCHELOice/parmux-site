@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "brand": "PARMUX",
+  "canonicalLogo": {
+    "id": "parmux-primary-logo",
+    "file": "./parmux-logo-master.png",
+    "format": "image/png",
+    "width": 1254,
+    "height": 1254,
+    "colorMode": "RGB",
+    "background": "#000000",
+    "sha256": "91C57FAEFA6643EFFFCF51A8E14748297352D5418D58578697056E2DAC9A2768",
+    "declaredOfficial": "2026-08-28",
+    "status": "canonical"
+  },
+  "approvedVariants": [
+    {
+      "file": "../parmux-logo-black.png",
+      "usage": "Monochrome mark for light legal and compliance surfaces only",
+      "status": "approved-derivative"
+    }
+  ],
+  "deprecatedAssets": [
+    {
+      "file": "../parmux-mark.svg",
+      "status": "deprecated",
+      "reason": "Superseded by the user-declared canonical master; do not use in new work"
+    }
+  ]
+}

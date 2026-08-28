@@ -6,71 +6,40 @@
   <meta name="description" content="Parmux diseña, implementa y opera sistemas robustos para operaciones reales." />
   <meta name="theme-color" content="#020c14" />
   <title>Parmux | Sistemas robustos para operaciones reales</title>
-  <link rel="icon" href="assets/parmux-logo-black.png" type="image/png" />
+  <link rel="icon" href="assets/brand/parmux-logo-master.png" type="image/png" />
   <link rel="stylesheet" href="home.css?v=20260729-ops-mock" />
+  <link rel="stylesheet" href="campaign.css?v=20260828-orchestrator" />
 </head>
 <body>
   <a class="skip" href="#main">Saltar al contenido</a>
-  <header class="topbar">
+  <header class="topbar campaign-header">
     <nav class="nav" aria-label="Principal">
-      <a class="brand" href="#top"><img src="assets/parmux-mark.svg" alt="" /><strong>PARMUX.</strong></a>
-      <div class="links"><a href="#proposito">Propósito</a><a href="#capacidades">Qué hacemos</a><a href="#proposito">Cómo trabajamos</a><a href="#contacto">Contacto</a></div>
+      <a class="brand" href="#top"><img src="assets/brand/parmux-logo-master.png" alt="" width="42" height="42" /><strong>PARMUX.</strong></a>
+      <div class="links"><a href="#proposito">Plataforma</a><a href="#capacidades">Capacidades</a><a href="#ia-aplicada">IA aplicada</a><a href="#metodo">Cómo trabajamos</a></div>
       <a class="top-cta" href="https://wa.me/56991020231?text=Hola%20Parmux%2C%20quiero%20conversar%20sobre%20un%20proyecto">Conversemos <span>→</span></a>
+      <button class="campaign-menu-toggle" type="button" aria-expanded="false" aria-controls="campaign-mobile-menu" aria-label="Abrir menú"><span></span><span></span></button>
     </nav>
+    <div class="campaign-mobile-menu" id="campaign-mobile-menu" hidden><a href="#proposito">Plataforma</a><a href="#capacidades">Capacidades</a><a href="#ia-aplicada">IA aplicada</a><a href="#metodo">Cómo trabajamos</a><a href="#contacto">Contacto</a></div>
   </header>
 
   <main id="main">
-    <section class="hero" id="top">
-      <div class="hero-copy">
-        <div class="topography" aria-hidden="true"></div>
-        <p class="kicker">Tecnología para operaciones críticas</p>
-        <h1>Sistemas robustos<br />para operaciones reales<span>.</span></h1>
-        <p class="lead">Diseñamos, implementamos y operamos infraestructura, automatización y software confiable para reducir fricción, asegurar continuidad y devolver capacidad de decisión a las personas.</p>
-        <div class="actions"><a class="primary" href="#infraestructura">Conocer nuestra infraestructura <span>→</span></a><a class="secondary" href="#capacidades">Ver capacidades</a></div>
+    <section class="hero campaign-hero" id="top">
+      <img class="campaign-hero-art" src="assets/parmux-orchestrator-hero.png" alt="Una máquina de orquestación digital rodeada por equipos humanos, representando la infraestructura, automatización e inteligencia artificial de PARMUX" />
+      <div class="campaign-hero-vignette" aria-hidden="true"></div>
+
+      <div class="campaign-hero-copy">
+        <div class="campaign-headline">
+          <div class="campaign-meta"><p class="kicker">Tecnología para operaciones críticas</p><span class="campaign-ai-badge" id="ia-aplicada"><i aria-hidden="true">✦</i> IA aplicada</span></div>
+          <h1>Sistemas confiables.<br />Operaciones claras.</h1>
+        </div>
+        <div class="campaign-intro">
+          <p>De procesos fragmentados a una operación conectada. PARMUX integra infraestructura, datos, automatización e inteligencia artificial aplicada para que tu organización avance con confianza.</p>
+          <div class="campaign-actions"><a class="campaign-primary" href="https://wa.me/56991020231?text=Hola%20Parmux%2C%20quiero%20conversar%20sobre%20un%20proyecto">Hablar con un experto <span>›</span></a><a class="campaign-secondary" href="#capacidades">Ver capacidades</a></div>
+        </div>
       </div>
 
-      <div class="command-center" aria-label="Centro de mando operacional">
-        <section class="panel status">
-          <h2>Estado de sistemas</h2>
-          <ul>
-            <li><i>◇</i><span>API Central</span><em>●&nbsp; Operativo</em></li>
-            <li><i>▤</i><span>Base de datos</span><em>●&nbsp; Operativo</em></li>
-            <li><i>▱</i><span>Mensajería</span><em>●&nbsp; Operativo</em></li>
-            <li><i>⚙</i><span>Automatizaciones</span><em>●&nbsp; Operativo</em></li>
-            <li><i>⌁</i><span>Servicios de integración</span><em>●&nbsp; Operativo</em></li>
-            <li><i>♢</i><span>Respaldo y archivos</span><em>●&nbsp; Operativo</em></li>
-          </ul>
-        </section>
-
-        <section class="panel realtime">
-          <h2>Rendimiento en tiempo real</h2>
-          <div class="metric"><span>CPU</span><b>24%</b><svg viewBox="0 0 420 35" preserveAspectRatio="none"><polyline points="0,20 10,15 20,22 28,12 38,20 48,16 60,21 72,8 82,18 94,16 104,26 116,20 128,18 140,14 150,22 162,17 175,19 185,9 198,12 210,25 222,20 232,15 244,19 255,5 267,18 280,14 292,22 305,19 320,21 335,18 350,22 365,18 382,20 398,16 420,18" /></svg></div>
-          <div class="metric"><span>Memoria</span><b>46%</b><svg viewBox="0 0 420 35" preserveAspectRatio="none"><polyline points="0,21 8,12 16,25 25,16 35,21 44,14 54,19 64,9 74,16 85,13 98,20 110,17 124,19 138,15 152,21 165,14 180,18 194,13 208,19 220,12 234,18 248,15 263,24 278,20 292,22 306,15 322,13 338,14 354,17 370,14 388,15 404,12 420,14" /></svg></div>
-          <div class="metric"><span>Latencia</span><b>128ms</b><svg viewBox="0 0 420 35" preserveAspectRatio="none"><polyline points="0,24 12,18 22,26 34,20 48,22 62,15 78,19 92,14 108,22 124,18 140,20 158,15 176,19 194,12 210,18 228,10 244,16 260,13 278,19 296,12 312,16 330,10 348,14 365,11 382,14 400,9 420,13" /></svg></div>
-        </section>
-
-        <section class="panel availability">
-          <h2>Disponibilidad (últimos 30 días)</h2>
-          <div><strong>99.98%</strong><em>↑ 0.02%</em></div>
-          <span class="uptime"></span>
-        </section>
-
-        <section class="panel events">
-          <h2>Eventos recientes</h2>
-          <p><time>Hoy, 12:58</time> Sincronización completada <em>● Éxito</em></p>
-          <p><time>Hoy, 12:41</time> Respaldo incremental <em>● Éxito</em></p>
-          <p><time>Hoy, 12:32</time> Despliegue de automatización <em>● Éxito</em></p>
-          <a href="#contacto">Ver todos los eventos</a>
-        </section>
-
-        <section class="panel trace">
-          <h2>Trazabilidad</h2>
-          <span>Procesos ejecutados hoy</span><strong>1.248 <em>↑ 8.6%</em></strong>
-          <span>Mensajes procesados</span><strong>12.8M <em>↑ 8.4%</em></strong>
-        </section>
-
-        <div class="integrations"><small>Integraciones activas</small><span>Módulo de datos <i>●</i></span><span>Notificaciones <i>●</i></span><span>Pasarela de pagos <i>●</i></span><span>Almacenamiento <i>●</i></span><span>Monitoreo externo <i>●</i></span><span>Documentos <i>●</i></span></div>
-      </div>
+      <div class="campaign-ai-node" aria-label="Inteligencia artificial aplicada a decisiones operacionales"><span><i aria-hidden="true">✦</i> IA</span><small>Decisión asistida</small></div>
+      <div class="campaign-system-note" aria-label="Estado de sistemas"><span><i></i> Sistemas operativos</span><span>99.98% disponibilidad</span></div>
     </section>
 
     <section class="principles" id="proposito">
@@ -86,8 +55,52 @@
       <article><div class="cap-icon">⚙</div><div><h2>Automatización</h2><p>Diseñamos y operamos automatizaciones confiables que liberan tiempo y reducen fricción.</p><a href="#contacto">Ver más&nbsp;&nbsp; →</a></div><div class="flow-art" aria-hidden="true">□<br />↓<br />□<br />↓<br />□</div></article>
       <article><div class="cap-icon">&lt;/&gt;</div><div><h2>Sistemas a medida</h2><p>Software y soluciones a la medida de tus procesos y objetivos de negocio.</p><a href="#contacto">Ver más&nbsp;&nbsp; →</a></div><div class="code-art" aria-hidden="true">const operar = () =&gt; {<br />&nbsp;return continuidad;<br />};</div></article>
     </section>
+
+    <section class="method-section" id="metodo">
+      <div class="section-intro">
+        <p>Cómo trabajamos</p>
+        <h2>De la fricción visible a una operación confiable.</h2>
+        <span>Intervenimos con alcance claro, evidencia verificable y transferencia real al equipo.</span>
+      </div>
+      <div class="method-steps">
+        <article><b>01</b><div><h3>Entender la operación</h3><p>Mapeamos personas, decisiones, sistemas, dependencias y puntos donde hoy se pierde capacidad.</p></div></article>
+        <article><b>02</b><div><h3>Diseñar la arquitectura</h3><p>Definimos una solución acotada, segura y mantenible antes de implementar.</p></div></article>
+        <article><b>03</b><div><h3>Integrar y automatizar</h3><p>Conectamos datos, servicios y tareas con trazabilidad desde el primer flujo.</p></div></article>
+        <article><b>04</b><div><h3>Operar y evolucionar</h3><p>Observamos el uso real, resolvemos fricción y mejoramos sin perder continuidad.</p></div></article>
+      </div>
+    </section>
+
+    <section class="continuity-section" id="continuidad">
+      <div class="continuity-copy">
+        <p>Continuidad operacional</p>
+        <h2>Lo invisible también debe estar diseñado.</h2>
+        <span>Una solución útil no termina cuando funciona. Debe poder observarse, mantenerse, recuperarse y ser comprendida por las personas que dependen de ella.</span>
+      </div>
+      <div class="continuity-grid">
+        <article><i>01</i><h3>Observabilidad</h3><p>Estados, eventos y alertas que permiten entender qué ocurre.</p></article>
+        <article><i>02</i><h3>Seguridad</h3><p>Accesos, datos y cambios protegidos desde el diseño.</p></article>
+        <article><i>03</i><h3>Recuperación</h3><p>Respaldos y rutas claras para volver a operar.</p></article>
+        <article><i>04</i><h3>Transferencia</h3><p>Documentación y acompañamiento para reducir dependencia.</p></article>
+      </div>
+    </section>
+
+    <section class="human-section" id="impacto">
+      <div class="human-signal" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <div class="human-copy">
+        <p>El resultado importa</p>
+        <h2>La tecnología debe sentirse como capacidad que vuelve.</h2>
+        <ul><li>Menos trabajo repetitivo</li><li>Más claridad para decidir</li><li>Más tiempo para crear y producir</li><li>Intervención humana donde aporta valor</li></ul>
+      </div>
+    </section>
+
+    <section class="closing-section" id="contacto">
+      <p>Conversemos</p>
+      <h2>¿Qué parte de tu operación necesita recuperar capacidad?</h2>
+      <div><a href="https://wa.me/56991020231?text=Hola%20Parmux%2C%20quiero%20conversar%20sobre%20un%20proyecto">Iniciar una conversación <span>→</span></a><a href="mailto:marcelo@parmux.com">marcelo@parmux.com</a></div>
+    </section>
   </main>
 
-  <footer id="contacto"><strong>PARMUX.</strong><span>Viña del Mar, Chile · marcelo@parmux.com</span><nav><a href="legal/privacidad.html">Privacidad</a><a href="legal/terminos.html">Términos</a><a href="legal/cookies.html">Cookies</a><a href="legal/eliminacion-datos.html">Eliminar datos</a></nav></footer>
+  <footer><strong>PARMUX.</strong><span>Viña del Mar, Chile · marcelo@parmux.com</span><nav><a href="legal/privacidad.html">Privacidad</a><a href="legal/terminos.html">Términos</a><a href="legal/cookies.html">Cookies</a><a href="legal/eliminacion-datos.html">Eliminar datos</a></nav></footer>
+  <script src="campaign.js?v=20260828-orchestrator"></script>
 </body>
 </html>
