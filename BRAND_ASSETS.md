@@ -18,11 +18,12 @@ This file must remain byte-identical. Never redraw, recolor, stretch, filter, tr
 ## Usage rules
 
 1. New public-facing work must reference the canonical master above.
-2. Preserve the original aspect ratio and provide clear space around the mark.
-3. Use the full-color canonical master on dark brand surfaces.
-4. `assets/parmux-logo-black.png` is the only approved monochrome derivative. Its use is limited to existing light-background legal and compliance pages.
-5. `assets/parmux-mark.svg` is deprecated. It remains in the repository only for historical compatibility and must not be used in new work.
-6. Experimental proposals must not introduce alternative PARMUX marks. If they display the logo, they should reference the canonical master.
+2. The customer-facing website wordmark is `PARMUX.AI`; pair this text with the canonical logo mark in the header and introductory brand contexts.
+3. Preserve the original aspect ratio and provide clear space around the mark.
+4. Use the full-color canonical master on dark brand surfaces.
+5. `assets/parmux-logo-black.png` is the only approved monochrome derivative. Its use is limited to existing light-background legal and compliance pages.
+6. `assets/parmux-mark.svg` is deprecated. It remains in the repository only for historical compatibility and must not be used in new work.
+7. Experimental proposals must not introduce alternative PARMUX marks. If they display the logo, they should reference the canonical master.
 
 ## Change control
 

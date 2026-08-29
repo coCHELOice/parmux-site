@@ -1,6 +1,8 @@
 {
   "schemaVersion": 1,
   "brand": "PARMUX",
+  "publicDisplayName": "PARMUX.AI",
+  "publicDisplayNameUsage": "Use PARMUX.AI in the public website wordmark and customer-facing introductory contexts to make the artificial intelligence focus explicit.",
   "canonicalLogo": {
     "id": "parmux-primary-logo",
     "file": "./parmux-logo-master.png",
