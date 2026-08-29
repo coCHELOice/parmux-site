@@ -487,9 +487,15 @@ footer .brand-ai {
   font-size: 12px;
 }
 
-.capabilities a {
+.capabilities a,
+.capabilities .capability-contact {
+  width: fit-content;
+  padding: 0 0 3px;
   color: var(--campaign-ink);
   border-bottom: 1px solid rgba(25, 4, 27, .28);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
 }
 
 .server-art,
@@ -616,8 +622,36 @@ footer .brand-ai {
 }
 
 .closing-section .closing-cta {
+  min-height: 50px;
+  padding: 0 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 38px;
+  border: 0;
+  border-radius: 999px;
   color: white;
   background: var(--campaign-plum);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: transform .25s, box-shadow .25s;
+}
+
+.closing-section .closing-cta:hover,
+.closing-section .closing-cta:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(24, 0, 24, .2);
+}
+
+.closing-actions {
+  margin-top: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
 }
 
 .closing-section .public-emails {
@@ -675,6 +709,321 @@ footer strong {
 footer a:hover,
 footer a:focus-visible {
   color: var(--campaign-lime);
+}
+
+.campaign-primary,
+.whatsapp-fab,
+.dialog-close,
+.whatsapp-topics button,
+.dialog-primary,
+.lead-submit {
+  appearance: none;
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.whatsapp-fab {
+  position: fixed;
+  z-index: 90;
+  right: 24px;
+  bottom: 22px;
+  min-height: 48px;
+  padding: 0 18px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #102000;
+  border-radius: 999px;
+  background: var(--campaign-lime);
+  box-shadow: 0 18px 44px rgba(24, 0, 24, .34);
+  transition: transform .25s, box-shadow .25s;
+}
+
+.whatsapp-fab:hover,
+.whatsapp-fab:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 52px rgba(24, 0, 24, .45);
+}
+
+.whatsapp-fab span {
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  color: var(--campaign-lime);
+  border-radius: 50%;
+  background: var(--campaign-plum);
+  font-size: 13px;
+}
+
+.whatsapp-fab strong {
+  font-size: 11px;
+  letter-spacing: .01em;
+}
+
+.contact-dialog {
+  width: min(560px, calc(100% - 32px));
+  max-height: min(820px, calc(100dvh - 32px));
+  padding: 30px;
+  overflow: auto;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, .15);
+  border-radius: 18px;
+  background: radial-gradient(circle at 100% 0, rgba(184, 60, 244, .2), transparent 34%), #1c061f;
+  box-shadow: 0 30px 100px rgba(10, 0, 12, .64);
+}
+
+.contact-dialog::backdrop {
+  background: rgba(12, 0, 14, .74);
+  backdrop-filter: blur(7px);
+}
+
+.contact-dialog[open] {
+  animation: dialogEnter .28s cubic-bezier(.16, 1, .3, 1);
+}
+
+.dialog-close-form {
+  position: absolute;
+  top: 17px;
+  right: 17px;
+  margin: 0;
+}
+
+.dialog-close {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, .74);
+  border: 1px solid rgba(255, 255, 255, .13);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .05);
+  font-size: 21px;
+}
+
+.dialog-brand {
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.dialog-brand img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  clip-path: inset(12% round 5px);
+  mix-blend-mode: screen;
+  transform: scale(1.16);
+}
+
+.dialog-brand div {
+  display: grid;
+  gap: 3px;
+}
+
+.dialog-brand strong {
+  font-size: 13px;
+}
+
+.dialog-brand span {
+  color: rgba(255, 255, 255, .58);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.dialog-brand i {
+  width: 6px;
+  height: 6px;
+  margin-right: 5px;
+  display: inline-block;
+  border-radius: 50%;
+  background: var(--campaign-lime);
+  box-shadow: 0 0 10px rgba(167, 255, 56, .7);
+}
+
+.dialog-eyebrow {
+  margin: 0 0 10px;
+  color: var(--campaign-lime);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+}
+
+.contact-dialog h2 {
+  max-width: 460px;
+  margin: 0;
+  color: white;
+  font-size: clamp(28px, 5vw, 42px);
+  line-height: 1.04;
+  letter-spacing: -.045em;
+  font-weight: 500;
+}
+
+.dialog-copy {
+  margin: 15px 0 22px;
+  color: rgba(255, 255, 255, .65);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.dialog-copy strong {
+  color: white;
+  font-weight: 600;
+}
+
+.whatsapp-topics {
+  margin-bottom: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.whatsapp-topics button {
+  min-height: 54px;
+  padding: 10px;
+  color: rgba(255, 255, 255, .76);
+  border: 1px solid rgba(255, 255, 255, .13);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .045);
+  font-size: 10px;
+  line-height: 1.35;
+  transition: color .2s, border-color .2s, background .2s;
+}
+
+.whatsapp-topics button:hover,
+.whatsapp-topics button:focus-visible,
+.whatsapp-topics button.is-selected {
+  color: var(--campaign-lime);
+  border-color: rgba(167, 255, 56, .52);
+  background: rgba(167, 255, 56, .08);
+}
+
+.dialog-field {
+  display: grid;
+  gap: 7px;
+}
+
+.dialog-field > span {
+  color: rgba(255, 255, 255, .65);
+  font-size: 10px;
+}
+
+.dialog-field input,
+.dialog-field textarea,
+.dialog-field select {
+  width: 100%;
+  padding: 12px 13px;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, .15);
+  border-radius: 9px;
+  outline: none;
+  background: rgba(4, 0, 7, .28);
+  font: inherit;
+  font-size: 12px;
+  resize: vertical;
+}
+
+.dialog-field input:focus,
+.dialog-field textarea:focus,
+.dialog-field select:focus {
+  border-color: var(--campaign-lime);
+  box-shadow: 0 0 0 3px rgba(167, 255, 56, .09);
+}
+
+.dialog-field select option {
+  color: var(--campaign-ink);
+}
+
+.dialog-primary {
+  width: 100%;
+  min-height: 49px;
+  margin-top: 14px;
+  padding: 0 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #112000;
+  border-radius: 999px;
+  background: var(--campaign-lime);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.dialog-primary:disabled {
+  cursor: wait;
+  opacity: .58;
+}
+
+.dialog-note {
+  margin-top: 11px;
+  display: block;
+  color: rgba(255, 255, 255, .42);
+  text-align: center;
+  font-size: 9px;
+}
+
+.lead-dialog {
+  width: min(650px, calc(100% - 32px));
+}
+
+.lead-form {
+  display: grid;
+  gap: 14px;
+}
+
+.lead-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.lead-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  color: rgba(255, 255, 255, .57);
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+.lead-consent input {
+  margin-top: 2px;
+  accent-color: var(--campaign-lime);
+}
+
+.lead-consent a {
+  color: white;
+  text-decoration: underline;
+}
+
+.form-honey {
+  position: absolute;
+  left: -9999px;
+}
+
+.form-status {
+  min-height: 18px;
+  margin: 0;
+  color: rgba(255, 255, 255, .62);
+  text-align: center;
+  font-size: 10px;
+}
+
+.form-status.is-success {
+  color: var(--campaign-lime);
+}
+
+.form-status.is-error {
+  color: #ff9cae;
+}
+
+@keyframes dialogEnter {
+  from { opacity: 0; transform: translateY(14px) scale(.985); }
+  to { opacity: 1; transform: none; }
 }
 
 .campaign-reveal {
@@ -988,6 +1337,39 @@ footer a:focus-visible {
     min-width: 0;
   }
 
+  .closing-actions,
+  .closing-section .closing-cta {
+    width: 100%;
+  }
+
+  .whatsapp-fab {
+    right: 14px;
+    bottom: 14px;
+    min-height: 44px;
+    padding-right: 14px;
+  }
+
+  .contact-dialog {
+    width: calc(100% - 20px);
+    max-height: calc(100dvh - 20px);
+    padding: 25px 18px 22px;
+    border-radius: 15px;
+  }
+
+  .dialog-close-form {
+    top: 12px;
+    right: 12px;
+  }
+
+  .whatsapp-topics,
+  .lead-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .whatsapp-topics button {
+    min-height: 44px;
+  }
+
   footer {
     padding: 28px 20px;
   }
@@ -1000,7 +1382,8 @@ footer a:focus-visible {
   .campaign-headline h1,
   .campaign-intro,
   .campaign-ai-node,
-  .campaign-reveal {
+  .campaign-reveal,
+  .contact-dialog[open] {
     opacity: 1;
     animation: none;
     transform: none;
