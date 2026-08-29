@@ -18,7 +18,7 @@ This file must remain byte-identical. Never redraw, recolor, stretch, filter, tr
 ## Usage rules
 
 1. New public-facing work must reference the canonical master above.
-2. The customer-facing website wordmark is `PARMUX.AI`; pair this text with the canonical logo mark in the header and introductory brand contexts.
+2. The customer-facing website wordmark is `PARMUX AI`: no punctuation, one visible space, and `AI` at the same size as `PARMUX` using the neon green accent. Pair this text with the canonical logo mark in the header and introductory brand contexts.
 3. Preserve the original aspect ratio and provide clear space around the mark.
 4. Use the full-color canonical master on dark brand surfaces.
 5. `assets/parmux-logo-black.png` is the only approved monochrome derivative. Its use is limited to existing light-background legal and compliance pages.

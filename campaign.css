@@ -61,10 +61,14 @@ body {
 }
 
 .campaign-header .brand-ai {
-  margin-left: .12em;
+  margin-left: .2em;
   color: var(--campaign-lime);
-  font-size: .72em;
-  letter-spacing: .045em;
+  font-size: 1em;
+  letter-spacing: inherit;
+}
+
+footer .brand-ai {
+  color: var(--campaign-lime);
 }
 
 .campaign-header .links {

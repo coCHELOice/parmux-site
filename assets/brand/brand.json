@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "brand": "PARMUX",
-  "publicDisplayName": "PARMUX.AI",
-  "publicDisplayNameUsage": "Use PARMUX.AI in the public website wordmark and customer-facing introductory contexts to make the artificial intelligence focus explicit.",
+  "publicDisplayName": "PARMUX AI",
+  "publicDisplayNameUsage": "Use PARMUX AI, without punctuation and with one visible space, in the public website wordmark and customer-facing introductory contexts. Display AI at the same size as PARMUX using the approved neon green accent.",
   "canonicalLogo": {
     "id": "parmux-primary-logo",
     "file": "./parmux-logo-master.png",
