@@ -40,7 +40,7 @@ if ('IntersectionObserver' in window && !reduceMotion) {
 
   revealTargets.forEach((target, index) => {
     target.classList.add('campaign-reveal');
-    target.style.transitionDelay = `${(index % 4) * 55}ms`;
+    target.style.transitionDelay = `${(index % 4) * 40}ms`;
     observer.observe(target);
   });
 } else {
