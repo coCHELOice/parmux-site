@@ -127,8 +127,10 @@ function appendChatMessage(text, role = 'assistant') {
 function renderChatActions(actions = []) {
   if (!(webChatActions instanceof HTMLElement)) return;
   webChatActions.replaceChildren();
+  const conversionReady = actions.length === 2 && actions.every((action) => ['form', 'whatsapp'].includes(action?.kind));
+  webChatActions.classList.toggle('is-ready', conversionReady);
 
-  actions.forEach((action) => {
+  actions.forEach((action, index) => {
     if (!action?.id || !action?.label) return;
     if (action.kind === 'whatsapp') {
       const link = document.createElement('a');
@@ -137,6 +139,7 @@ function renderChatActions(actions = []) {
       link.rel = 'noreferrer';
       link.textContent = action.label;
       link.className = 'is-conversion';
+      link.style.setProperty('--chat-action-index', index);
       webChatActions.append(link);
       return;
     }
@@ -147,6 +150,7 @@ function renderChatActions(actions = []) {
     button.dataset.chatKind = action.kind || 'reply';
     button.textContent = action.label;
     if (action.kind === 'form') button.className = 'is-conversion';
+    button.style.setProperty('--chat-action-index', index);
     webChatActions.append(button);
   });
 }
