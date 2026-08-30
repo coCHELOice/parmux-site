@@ -49,6 +49,8 @@ if ('IntersectionObserver' in window && !reduceMotion) {
 
 const PARMUX_WHATSAPP = '56961597939';
 const WEB_CHAT_ENDPOINT = 'https://automation.parmux.com/webhook/parmux-web-chat';
+const pageParams = new URLSearchParams(window.location.search);
+const leadSource = pageParams.get('origen') === 'whatsapp' ? 'WhatsApp PARMUX' : 'Landing parmux.com';
 const webChatDialog = document.querySelector('#web-chat-dialog');
 const leadDialog = document.querySelector('#lead-dialog');
 const webChatLog = document.querySelector('#web-chat-log');
@@ -341,6 +343,10 @@ document.querySelectorAll('[data-open-lead-form]').forEach((button) => {
   });
 });
 
+if (pageParams.get('diagnostico') === 'empresa') {
+  window.requestAnimationFrame(() => openLeadForm('Diagnóstico inicial'));
+}
+
 [webChatDialog, leadDialog].forEach((dialog) => {
   dialog?.addEventListener('click', (event) => {
     if (!(dialog instanceof HTMLDialogElement) || event.target !== dialog) return;
@@ -378,7 +384,7 @@ leadForm?.addEventListener('submit', async (event) => {
   payload._replyto = payload.email;
   payload._template = 'table';
   payload._url = window.location.href;
-  payload.origen = 'Landing parmux.com';
+  payload.origen = leadSource;
   payload.tipo_solicitud = 'Ficha de diagnóstico empresarial';
 
   try {
@@ -396,7 +402,8 @@ leadForm?.addEventListener('submit', async (event) => {
 
     leadForm.reset();
     if (leadFormStatus) {
-      leadFormStatus.textContent = 'Solicitud enviada. El equipo de PARMUX la recibió y podrá responderte por email.';
+      const returnMessage = encodeURIComponent('Hola PARMUX AI. Ya completé y envié el diagnóstico empresarial. Quedo atento al siguiente paso.');
+      leadFormStatus.innerHTML = `Solicitud enviada. El equipo de PARMUX la recibió. <a href="https://wa.me/${PARMUX_WHATSAPP}?text=${returnMessage}" target="_blank" rel="noreferrer">Volver a WhatsApp para continuar</a>.`;
       leadFormStatus.className = 'form-status is-success';
     }
   } catch (error) {
