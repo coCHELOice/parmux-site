@@ -912,6 +912,15 @@ footer a:focus-visible {
   font-size: 10px;
 }
 
+.dialog-field > span em {
+  margin-left: 5px;
+  color: rgba(255, 255, 255, .34);
+  font-size: 8px;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
 .dialog-field input,
 .dialog-field textarea,
 .dialog-field select {
@@ -936,6 +945,12 @@ footer a:focus-visible {
 
 .dialog-field select option {
   color: var(--campaign-ink);
+}
+
+.dialog-field small {
+  color: rgba(255, 255, 255, .38);
+  font-size: 8px;
+  line-height: 1.45;
 }
 
 .dialog-primary {
@@ -967,18 +982,48 @@ footer a:focus-visible {
 }
 
 .lead-dialog {
-  width: min(650px, calc(100% - 32px));
+  width: min(820px, calc(100% - 32px));
+}
+
+.lead-dialog h2 {
+  max-width: 650px;
 }
 
 .lead-form {
   display: grid;
-  gap: 14px;
+  gap: 20px;
+}
+
+.lead-form-section {
+  min-width: 0;
+  margin: 0;
+  padding: 20px 0 0;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+}
+
+.lead-form-section legend {
+  padding: 0 11px 0 0;
+  color: white;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: -.01em;
+}
+
+.lead-form-section legend span {
+  margin-right: 8px;
+  color: var(--campaign-lime);
+  font-size: 9px;
 }
 
 .lead-form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+}
+
+.lead-field-wide {
+  grid-column: 1 / -1;
 }
 
 .lead-consent {
@@ -1364,6 +1409,10 @@ footer a:focus-visible {
   .whatsapp-topics,
   .lead-form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .lead-field-wide {
+    grid-column: auto;
   }
 
   .whatsapp-topics button {

@@ -19,8 +19,9 @@ Ambos correos se enrutan externamente a la casilla operativa definida por PARMUX
 
 - `Conversemos`, en la cabecera: abre directamente el WhatsApp oficial.
 - `Hablar con un experto` y el boton flotante: abren el panel de WhatsApp dentro del sitio; el usuario elige un tema o edita el mensaje antes de continuar.
-- `Solicitar contacto`, en capacidades, y `Solicitar un diagnostico`, en el cierre: abren el formulario comercial dentro del sitio.
-- El formulario entrega las solicitudes a `negocios@parmux.com` mediante el endpoint AJAX de FormSubmit y conserva un enlace de correo como fallback visible si el servicio no responde.
+- `Solicitar contacto`, en capacidades, y `Solicitar un diagnostico`, en el cierre: abren la ficha de diagnostico empresarial dentro del sitio.
+- La ficha solicita razon social, RUT de empresa con validacion de digito verificador, rubro, tamano, persona y cargo de contacto, email, telefono, sistemas actuales, area de interes, plazo y descripcion del desafio.
+- El formulario entrega las solicitudes ordenadas a `negocios@parmux.com` mediante el endpoint AJAX de FormSubmit y conserva un enlace de correo como fallback visible si el servicio no responde.
 
 ## Regla de consistencia
 

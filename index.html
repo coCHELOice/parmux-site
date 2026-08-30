@@ -21,7 +21,7 @@
   <link rel="icon" href="assets/brand/parmux-logo-master.png" type="image/png" />
   <link rel="preload" href="assets/parmux-orchestrator-hero.webp" as="image" type="image/webp" fetchpriority="high" />
   <link rel="stylesheet" href="home.css?v=20260729-ops-mock" />
-  <link rel="stylesheet" href="campaign.css?v=20260829-contact-funnel-1" />
+  <link rel="stylesheet" href="campaign.css?v=20260829-contact-funnel-2" />
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -160,18 +160,40 @@
 
   <dialog class="contact-dialog lead-dialog" id="lead-dialog" aria-labelledby="lead-dialog-title">
     <form method="dialog" class="dialog-close-form"><button class="dialog-close" aria-label="Cerrar">×</button></form>
-    <p class="dialog-eyebrow">Diagnóstico inicial</p>
-    <h2 id="lead-dialog-title">Conversemos con contexto.</h2>
-    <p class="dialog-copy">Déjanos los datos esenciales. El equipo de PARMUX recibirá la solicitud en <strong>negocios@parmux.com</strong>.</p>
+    <p class="dialog-eyebrow">Ficha de diagnóstico empresarial · 2 minutos</p>
+    <h2 id="lead-dialog-title">Entendamos bien tu operación.</h2>
+    <p class="dialog-copy">Completa los antecedentes esenciales para que PARMUX evalúe el contexto antes de responder. La solicitud llegará ordenada a <strong>negocios@parmux.com</strong>.</p>
     <form class="lead-form" id="lead-form">
-      <div class="lead-form-grid">
-        <label class="dialog-field"><span>Nombre</span><input type="text" name="nombre" autocomplete="name" required /></label>
-        <label class="dialog-field"><span>Empresa</span><input type="text" name="empresa" autocomplete="organization" required /></label>
-        <label class="dialog-field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
-        <label class="dialog-field"><span>Teléfono</span><input type="tel" name="telefono" autocomplete="tel" placeholder="+56 9…" /></label>
-      </div>
-      <label class="dialog-field"><span>¿En qué podemos ayudarte?</span><select name="interes" id="lead-interest" required><option value="">Selecciona una opción</option><option>Infraestructura y continuidad</option><option>Integración de sistemas</option><option>Automatización e IA aplicada</option><option>Software a medida</option><option>Diagnóstico inicial</option><option>Otro desafío</option></select></label>
-      <label class="dialog-field"><span>Cuéntanos brevemente el desafío</span><textarea name="mensaje" rows="4" required></textarea></label>
+      <fieldset class="lead-form-section">
+        <legend><span>01</span> Empresa</legend>
+        <div class="lead-form-grid">
+          <label class="dialog-field"><span>Razón social</span><input type="text" name="razon_social" autocomplete="organization" required /></label>
+          <label class="dialog-field"><span>RUT de la empresa</span><input type="text" name="rut_empresa" id="lead-rut" inputmode="text" autocomplete="off" maxlength="12" placeholder="76.123.456-7" aria-describedby="lead-rut-help" required /><small id="lead-rut-help">Se valida el formato y dígito verificador.</small></label>
+          <label class="dialog-field"><span>Rubro</span><select name="rubro" required><option value="">Selecciona el rubro</option><option>Servicios profesionales</option><option>Tecnología y software</option><option>Comercio y e-commerce</option><option>Industria y logística</option><option>Construcción e inmobiliario</option><option>Educación</option><option>Turismo y hospitalidad</option><option>Otro</option></select></label>
+          <label class="dialog-field"><span>Tamaño de la empresa</span><select name="tamano_empresa" required><option value="">Número de personas</option><option>1–10 personas</option><option>11–50 personas</option><option>51–200 personas</option><option>201–500 personas</option><option>Más de 500 personas</option></select></label>
+          <label class="dialog-field lead-field-wide"><span>Sitio web <em>Opcional</em></span><input type="url" name="sitio_web" autocomplete="url" placeholder="https://empresa.cl" /></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="lead-form-section">
+        <legend><span>02</span> Persona de contacto</legend>
+        <div class="lead-form-grid">
+          <label class="dialog-field"><span>Nombre y apellido</span><input type="text" name="nombre_contacto" autocomplete="name" required /></label>
+          <label class="dialog-field"><span>Cargo</span><input type="text" name="cargo" autocomplete="organization-title" placeholder="Gerencia, Operaciones, TI…" required /></label>
+          <label class="dialog-field"><span>Email corporativo</span><input type="email" name="email" autocomplete="email" required /></label>
+          <label class="dialog-field"><span>Teléfono</span><input type="tel" name="telefono" autocomplete="tel" placeholder="+56 9…" required /></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="lead-form-section">
+        <legend><span>03</span> Necesidad operativa</legend>
+        <div class="lead-form-grid">
+          <label class="dialog-field"><span>Área de interés</span><select name="interes" id="lead-interest" required><option value="">Selecciona una opción</option><option>Infraestructura y continuidad</option><option>Integración de sistemas</option><option>Automatización e IA aplicada</option><option>Software a medida</option><option>Diagnóstico inicial</option><option>Otro desafío</option></select></label>
+          <label class="dialog-field"><span>Plazo esperado</span><select name="plazo" required><option value="">Selecciona un plazo</option><option>Lo antes posible</option><option>Durante los próximos 30 días</option><option>En 1–3 meses</option><option>En 3–6 meses</option><option>Solo estamos explorando</option></select></label>
+          <label class="dialog-field lead-field-wide"><span>Sistemas o plataformas actuales</span><input type="text" name="sistemas_actuales" placeholder="Ej.: ERP, CRM, planillas, WhatsApp, software interno" required /></label>
+          <label class="dialog-field lead-field-wide"><span>Describe el desafío y el resultado esperado</span><textarea name="mensaje" rows="5" minlength="40" placeholder="Qué ocurre hoy, dónde se pierde tiempo o información y qué debería mejorar." required></textarea><small>Mínimo 40 caracteres. No incluyas contraseñas ni datos sensibles.</small></label>
+        </div>
+      </fieldset>
       <label class="lead-consent"><input type="checkbox" name="consentimiento" value="Aceptado" required /><span>Acepto que PARMUX use estos datos para responder esta solicitud, según su <a href="legal/privacidad.html" target="_blank">Política de Privacidad</a>.</span></label>
       <input class="form-honey" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" />
       <button class="dialog-primary lead-submit" type="submit">Enviar solicitud <span>→</span></button>
@@ -180,6 +202,6 @@
   </dialog>
 
   <footer><strong>PARMUX <span class="brand-ai">AI</span></strong><span>Viña del Mar, Chile · <a href="mailto:contacto@parmux.com">contacto@parmux.com</a> · <a href="mailto:negocios@parmux.com">negocios@parmux.com</a></span><nav><a href="legal/privacidad.html">Privacidad</a><a href="legal/terminos.html">Términos</a><a href="legal/cookies.html">Cookies</a><a href="legal/eliminacion-datos.html">Eliminar datos</a></nav></footer>
-  <script src="campaign.js?v=20260829-contact-funnel-1"></script>
+  <script src="campaign.js?v=20260829-contact-funnel-2"></script>
 </body>
 </html>

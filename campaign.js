@@ -54,6 +54,7 @@ const whatsappMessage = document.querySelector('#whatsapp-message');
 const whatsappContinue = document.querySelector('#whatsapp-continue');
 const leadForm = document.querySelector('#lead-form');
 const leadInterest = document.querySelector('#lead-interest');
+const leadRut = document.querySelector('#lead-rut');
 const leadFormStatus = document.querySelector('#lead-form-status');
 
 function openDialog(dialog) {
@@ -65,6 +66,45 @@ function updateWhatsAppLink() {
   if (!(whatsappMessage instanceof HTMLTextAreaElement) || !(whatsappContinue instanceof HTMLAnchorElement)) return;
   const message = whatsappMessage.value.trim() || 'Hola PARMUX AI, quiero conversar sobre un proyecto.';
   whatsappContinue.href = `https://wa.me/${PARMUX_WHATSAPP}?text=${encodeURIComponent(message)}`;
+}
+
+function cleanRut(value) {
+  return String(value || '').toUpperCase().replace(/[^0-9K]/g, '');
+}
+
+function formatRut(value) {
+  const clean = cleanRut(value).slice(0, 9);
+  if (clean.length <= 1) return clean;
+  const verifier = clean.slice(-1);
+  const body = clean.slice(0, -1).replace(/^0+/, '') || '0';
+  return `${body.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}-${verifier}`;
+}
+
+function isValidRut(value) {
+  const clean = cleanRut(value);
+  if (!/^\d{7,8}[0-9K]$/.test(clean)) return false;
+  const body = clean.slice(0, -1);
+  const verifier = clean.slice(-1);
+  let sum = 0;
+  let multiplier = 2;
+
+  for (let index = body.length - 1; index >= 0; index -= 1) {
+    sum += Number(body[index]) * multiplier;
+    multiplier = multiplier === 7 ? 2 : multiplier + 1;
+  }
+
+  const remainder = 11 - (sum % 11);
+  const expected = remainder === 11 ? '0' : remainder === 10 ? 'K' : String(remainder);
+  return verifier === expected;
+}
+
+function updateRutValidity() {
+  if (!(leadRut instanceof HTMLInputElement)) return;
+  leadRut.value = formatRut(leadRut.value);
+  const message = leadRut.value && !isValidRut(leadRut.value)
+    ? 'Ingresa un RUT de empresa válido, incluido el dígito verificador.'
+    : '';
+  leadRut.setCustomValidity(message);
 }
 
 document.querySelectorAll('[data-open-whatsapp]').forEach((button) => {
@@ -87,6 +127,9 @@ document.querySelectorAll('[data-whatsapp-topic]').forEach((button) => {
 whatsappMessage?.addEventListener('input', updateWhatsAppLink);
 whatsappContinue?.addEventListener('click', () => whatsappDialog?.close());
 updateWhatsAppLink();
+
+leadRut?.addEventListener('input', updateRutValidity);
+leadRut?.addEventListener('blur', updateRutValidity);
 
 document.querySelectorAll('[data-open-lead-form]').forEach((button) => {
   button.addEventListener('click', () => {
@@ -134,10 +177,12 @@ leadForm?.addEventListener('submit', async (event) => {
   }
 
   const payload = Object.fromEntries(formData.entries());
-  payload._subject = `Nuevo contacto web PARMUX · ${payload.interes || 'Consulta'}`;
+  payload._subject = `Nuevo diagnóstico PARMUX · ${payload.razon_social || 'Empresa'} · ${payload.interes || 'Consulta'}`;
+  payload._replyto = payload.email;
   payload._template = 'table';
   payload._url = window.location.href;
   payload.origen = 'Landing parmux.com';
+  payload.tipo_solicitud = 'Ficha de diagnóstico empresarial';
 
   try {
     const response = await fetch('https://formsubmit.co/ajax/negocios@parmux.com', {
