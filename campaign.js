@@ -51,6 +51,15 @@ const PARMUX_WHATSAPP = '56961597939';
 const WEB_CHAT_ENDPOINT = 'https://automation.parmux.com/webhook/parmux-web-chat';
 const pageParams = new URLSearchParams(window.location.search);
 const leadSource = pageParams.get('origen') === 'whatsapp' ? 'WhatsApp PARMUX' : 'Landing parmux.com';
+const leadInterestBySlug = {
+  diagnostico: 'Diagnóstico inicial',
+  automatizacion: 'Automatización e IA aplicada',
+  integracion: 'Integración de sistemas',
+  ia: 'Automatización e IA aplicada',
+  software: 'Software a medida',
+  experto: 'Diagnóstico inicial'
+};
+const leadInterestFromUrl = leadInterestBySlug[pageParams.get('interes')] || 'Diagnóstico inicial';
 const webChatDialog = document.querySelector('#web-chat-dialog');
 const leadDialog = document.querySelector('#lead-dialog');
 const webChatLog = document.querySelector('#web-chat-log');
@@ -344,7 +353,7 @@ document.querySelectorAll('[data-open-lead-form]').forEach((button) => {
 });
 
 if (pageParams.get('diagnostico') === 'empresa') {
-  window.requestAnimationFrame(() => openLeadForm('Diagnóstico inicial'));
+  window.requestAnimationFrame(() => openLeadForm(leadInterestFromUrl));
 }
 
 [webChatDialog, leadDialog].forEach((dialog) => {
