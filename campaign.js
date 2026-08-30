@@ -48,24 +48,206 @@ if ('IntersectionObserver' in window && !reduceMotion) {
 }
 
 const PARMUX_WHATSAPP = '56961597939';
-const whatsappDialog = document.querySelector('#whatsapp-dialog');
+const WEB_CHAT_ENDPOINT = 'https://automation.parmux.com/webhook/parmux-web-chat';
+const webChatDialog = document.querySelector('#web-chat-dialog');
 const leadDialog = document.querySelector('#lead-dialog');
-const whatsappMessage = document.querySelector('#whatsapp-message');
-const whatsappContinue = document.querySelector('#whatsapp-continue');
+const webChatLog = document.querySelector('#web-chat-log');
+const webChatActions = document.querySelector('#web-chat-actions');
+const webChatForm = document.querySelector('#web-chat-form');
+const webChatInput = document.querySelector('#web-chat-input');
+const webChatStatus = document.querySelector('#web-chat-status');
+const webChatWhatsApp = document.querySelector('#web-chat-whatsapp');
 const leadForm = document.querySelector('#lead-form');
 const leadInterest = document.querySelector('#lead-interest');
 const leadRut = document.querySelector('#lead-rut');
 const leadFormStatus = document.querySelector('#lead-form-status');
+let webChatStage = 'start';
+let webChatTopic = '';
+let webChatBusy = false;
+let webChatTyping = null;
+let lastChatContext = 'Quiero conversar sobre un proyecto.';
+
+function createChatSession() {
+  try {
+    const stored = sessionStorage.getItem('parmux_web_chat_session');
+    if (stored) return stored;
+    const generated = window.crypto?.randomUUID?.() || `parmux-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    sessionStorage.setItem('parmux_web_chat_session', generated);
+    return generated;
+  } catch (error) {
+    return `parmux-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  }
+}
+
+const webChatSession = createChatSession();
 
 function openDialog(dialog) {
   if (!(dialog instanceof HTMLDialogElement)) return;
   if (!dialog.open) dialog.showModal();
 }
 
-function updateWhatsAppLink() {
-  if (!(whatsappMessage instanceof HTMLTextAreaElement) || !(whatsappContinue instanceof HTMLAnchorElement)) return;
-  const message = whatsappMessage.value.trim() || 'Hola PARMUX AI, quiero conversar sobre un proyecto.';
-  whatsappContinue.href = `https://wa.me/${PARMUX_WHATSAPP}?text=${encodeURIComponent(message)}`;
+function getWhatsAppUrl() {
+  const message = `Hola PARMUX AI. Inicié una conversación en parmux.com y quiero continuar. Mi contexto: ${lastChatContext}`;
+  return `https://wa.me/${PARMUX_WHATSAPP}?text=${encodeURIComponent(message)}`;
+}
+
+function updateWhatsAppHandoff() {
+  if (webChatWhatsApp instanceof HTMLAnchorElement) webChatWhatsApp.href = getWhatsAppUrl();
+}
+
+function appendChatMessage(text, role = 'assistant') {
+  if (!(webChatLog instanceof HTMLElement) || !text) return;
+  const message = document.createElement('div');
+  message.className = `web-chat-message is-${role}`;
+
+  if (role === 'assistant') {
+    const avatar = document.createElement('span');
+    avatar.className = 'web-chat-avatar';
+    avatar.setAttribute('aria-hidden', 'true');
+    avatar.textContent = 'P';
+    message.append(avatar);
+  }
+
+  const body = document.createElement('div');
+  const paragraph = document.createElement('p');
+  paragraph.textContent = text;
+  body.append(paragraph);
+
+  if (role === 'assistant') {
+    const author = document.createElement('small');
+    author.textContent = 'PARMUX AI';
+    body.append(author);
+  }
+
+  message.append(body);
+  webChatLog.append(message);
+  webChatLog.scrollTo({ top: webChatLog.scrollHeight, behavior: reduceMotion ? 'auto' : 'smooth' });
+}
+
+function renderChatActions(actions = []) {
+  if (!(webChatActions instanceof HTMLElement)) return;
+  webChatActions.replaceChildren();
+
+  actions.forEach((action) => {
+    if (!action?.id || !action?.label) return;
+    if (action.kind === 'whatsapp') {
+      const link = document.createElement('a');
+      link.href = getWhatsAppUrl();
+      link.target = '_blank';
+      link.rel = 'noreferrer';
+      link.textContent = action.label;
+      link.className = 'is-conversion';
+      webChatActions.append(link);
+      return;
+    }
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.chatAction = action.id;
+    button.dataset.chatKind = action.kind || 'reply';
+    button.textContent = action.label;
+    if (action.kind === 'form') button.className = 'is-conversion';
+    webChatActions.append(button);
+  });
+}
+
+function setChatBusy(busy) {
+  webChatBusy = busy;
+  if (webChatInput instanceof HTMLTextAreaElement) webChatInput.disabled = busy;
+  const submit = webChatForm?.querySelector('button[type="submit"]');
+  if (submit instanceof HTMLButtonElement) submit.disabled = busy;
+  webChatActions?.querySelectorAll('button').forEach((button) => { button.disabled = busy; });
+
+  if (busy) {
+    if (webChatStatus) webChatStatus.textContent = 'PARMUX está preparando la respuesta…';
+    if (webChatLog instanceof HTMLElement && !webChatTyping) {
+      webChatTyping = document.createElement('div');
+      webChatTyping.className = 'web-chat-typing';
+      webChatTyping.setAttribute('aria-label', 'PARMUX está escribiendo');
+      webChatTyping.innerHTML = '<span></span><span></span><span></span>';
+      webChatLog.append(webChatTyping);
+      webChatLog.scrollTop = webChatLog.scrollHeight;
+    }
+  } else {
+    webChatTyping?.remove();
+    webChatTyping = null;
+    if (webChatStatus) webChatStatus.textContent = 'Tus mensajes se usan sólo para orientar esta conversación.';
+  }
+}
+
+function interestFromChat() {
+  if (webChatTopic === 'automation' || webChatTopic === 'ai') return 'Automatización e IA aplicada';
+  if (webChatTopic === 'integration') return 'Integración de sistemas';
+  return 'Diagnóstico inicial';
+}
+
+function openLeadForm(interest = 'Diagnóstico inicial') {
+  if (leadInterest instanceof HTMLSelectElement && interest) leadInterest.value = interest;
+  if (leadFormStatus) {
+    leadFormStatus.textContent = '';
+    leadFormStatus.className = 'form-status';
+  }
+  if (webChatDialog instanceof HTMLDialogElement && webChatDialog.open) webChatDialog.close();
+  openDialog(leadDialog);
+}
+
+async function sendChatMessage({ action = '', message = '', label = '' } = {}) {
+  if (webChatBusy || (!action && !message)) return;
+
+  const visibleMessage = message || label;
+  if (visibleMessage) {
+    appendChatMessage(visibleMessage, 'user');
+    lastChatContext = visibleMessage.slice(0, 700);
+    updateWhatsAppHandoff();
+  }
+  renderChatActions([]);
+  setChatBusy(true);
+
+  try {
+    const response = await fetch(WEB_CHAT_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+      body: JSON.stringify({
+        session_id: webChatSession,
+        stage: webChatStage,
+        action,
+        message
+      })
+    });
+    const result = await response.json();
+
+    if (!response.ok || result.ok !== true) {
+      if (result.reply) {
+        appendChatMessage(result.reply);
+        renderChatActions([
+          { id: 'open_form', label: 'Quiero un diagnóstico', kind: 'form' },
+          { id: 'whatsapp', label: 'Continuar en WhatsApp', kind: 'whatsapp' }
+        ]);
+        return;
+      }
+      throw new Error(result.error || 'chat_request_failed');
+    }
+
+    webChatStage = result.stage || webChatStage;
+    if (result.topic) webChatTopic = result.topic;
+    appendChatMessage(result.reply);
+    renderChatActions(Array.isArray(result.actions) ? result.actions : []);
+  } catch (error) {
+    if (!webChatLog?.querySelector('[data-chat-fallback]')) {
+      const fallback = document.createElement('div');
+      fallback.dataset.chatFallback = 'true';
+      fallback.className = 'web-chat-message is-assistant';
+      fallback.innerHTML = '<span class="web-chat-avatar" aria-hidden="true">P</span><div><p>La orientación en línea no está disponible por un momento. Aún puedes continuar por WhatsApp o completar el diagnóstico.</p><small>PARMUX AI</small></div>';
+      webChatLog?.append(fallback);
+    }
+    renderChatActions([
+      { id: 'open_form', label: 'Quiero un diagnóstico', kind: 'form' },
+      { id: 'whatsapp', label: 'Continuar en WhatsApp', kind: 'whatsapp' }
+    ]);
+  } finally {
+    setChatBusy(false);
+    webChatInput?.focus();
+  }
 }
 
 function cleanRut(value) {
@@ -107,44 +289,55 @@ function updateRutValidity() {
   leadRut.setCustomValidity(message);
 }
 
-document.querySelectorAll('[data-open-whatsapp]').forEach((button) => {
-  button.addEventListener('click', () => openDialog(whatsappDialog));
-});
-
-document.querySelectorAll('[data-whatsapp-topic]').forEach((button) => {
+document.querySelectorAll('[data-open-web-chat]').forEach((button) => {
   button.addEventListener('click', () => {
-    document.querySelectorAll('[data-whatsapp-topic]').forEach((item) => item.classList.remove('is-selected'));
-    button.classList.add('is-selected');
-    if (whatsappMessage instanceof HTMLTextAreaElement) {
-      whatsappMessage.value = `Hola PARMUX AI. ${button.dataset.whatsappTopic}`;
-      whatsappMessage.focus();
-      whatsappMessage.setSelectionRange(whatsappMessage.value.length, whatsappMessage.value.length);
-    }
-    updateWhatsAppLink();
+    openDialog(webChatDialog);
+    window.setTimeout(() => webChatInput?.focus(), 80);
   });
 });
 
-whatsappMessage?.addEventListener('input', updateWhatsAppLink);
-whatsappContinue?.addEventListener('click', () => whatsappDialog?.close());
-updateWhatsAppLink();
+webChatActions?.addEventListener('click', (event) => {
+  if (!(event.target instanceof Element)) return;
+  const button = event.target.closest('button[data-chat-action]');
+  if (!(button instanceof HTMLButtonElement)) return;
+  const action = button.dataset.chatAction || '';
+  const kind = button.dataset.chatKind || 'reply';
+
+  if (kind === 'form' || action === 'open_form') {
+    openLeadForm(interestFromChat());
+    return;
+  }
+
+  sendChatMessage({ action, label: button.textContent.trim() });
+});
+
+webChatForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  if (!(webChatInput instanceof HTMLTextAreaElement)) return;
+  const message = webChatInput.value.trim();
+  if (!message) return;
+  webChatInput.value = '';
+  sendChatMessage({ message });
+});
+
+webChatInput?.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter' || event.shiftKey) return;
+  event.preventDefault();
+  webChatForm?.requestSubmit();
+});
+
+updateWhatsAppHandoff();
 
 leadRut?.addEventListener('input', updateRutValidity);
 leadRut?.addEventListener('blur', updateRutValidity);
 
 document.querySelectorAll('[data-open-lead-form]').forEach((button) => {
   button.addEventListener('click', () => {
-    if (leadInterest instanceof HTMLSelectElement && button.dataset.interest) {
-      leadInterest.value = button.dataset.interest;
-    }
-    if (leadFormStatus) {
-      leadFormStatus.textContent = '';
-      leadFormStatus.className = 'form-status';
-    }
-    openDialog(leadDialog);
+    openLeadForm(button.dataset.interest || 'Diagnóstico inicial');
   });
 });
 
-[whatsappDialog, leadDialog].forEach((dialog) => {
+[webChatDialog, leadDialog].forEach((dialog) => {
   dialog?.addEventListener('click', (event) => {
     if (!(dialog instanceof HTMLDialogElement) || event.target !== dialog) return;
     const bounds = dialog.getBoundingClientRect();

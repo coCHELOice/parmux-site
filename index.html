@@ -21,7 +21,7 @@
   <link rel="icon" href="assets/brand/parmux-logo-master.png" type="image/png" />
   <link rel="preload" href="assets/parmux-orchestrator-hero.webp" as="image" type="image/webp" fetchpriority="high" />
   <link rel="stylesheet" href="home.css?v=20260729-ops-mock" />
-  <link rel="stylesheet" href="campaign.css?v=20260829-contact-funnel-2" />
+  <link rel="stylesheet" href="campaign.css?v=20260829-web-chat-1" />
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -140,22 +140,36 @@
     </section>
   </main>
 
-  <button class="whatsapp-fab" type="button" data-open-whatsapp aria-label="Abrir asistente de WhatsApp"><span aria-hidden="true">◉</span><strong>WhatsApp</strong></button>
+  <button class="chat-fab" type="button" data-open-web-chat aria-label="Abrir chat de PARMUX" aria-haspopup="dialog" aria-controls="web-chat-dialog"><span aria-hidden="true">✦</span><span class="chat-fab-copy"><small>En línea</small><strong>Chat PARMUX</strong></span></button>
 
-  <dialog class="contact-dialog whatsapp-dialog" id="whatsapp-dialog" aria-labelledby="whatsapp-dialog-title">
-    <form method="dialog" class="dialog-close-form"><button class="dialog-close" aria-label="Cerrar">×</button></form>
-    <div class="dialog-brand"><img src="assets/brand/parmux-logo-master.png" alt="" width="42" height="42" /><div><strong>PARMUX AI</strong><span><i></i> Disponible por WhatsApp</span></div></div>
-    <p class="dialog-eyebrow">Respuesta inmediata</p>
-    <h2 id="whatsapp-dialog-title">Cuéntanos qué quieres hacer avanzar.</h2>
-    <p class="dialog-copy">Elige un punto de partida o escribe tu mensaje. La conversación continuará en el WhatsApp oficial de PARMUX.</p>
-    <div class="whatsapp-topics" aria-label="Temas frecuentes">
-      <button type="button" data-whatsapp-topic="Quiero automatizar un proceso repetitivo de mi empresa.">Automatizar un proceso</button>
-      <button type="button" data-whatsapp-topic="Quiero integrar sistemas que hoy no comparten información.">Integrar sistemas</button>
-      <button type="button" data-whatsapp-topic="Quiero evaluar una aplicación concreta de inteligencia artificial.">Aplicar IA</button>
+  <dialog class="contact-dialog web-chat-dialog" id="web-chat-dialog" aria-labelledby="web-chat-dialog-title">
+    <form method="dialog" class="dialog-close-form"><button class="dialog-close" aria-label="Cerrar chat">×</button></form>
+    <div class="web-chat-shell">
+      <header class="web-chat-header">
+        <div class="dialog-brand"><img src="assets/brand/parmux-logo-master.png" alt="" width="42" height="42" /><div><strong id="web-chat-dialog-title">PARMUX AI</strong><span><i></i> Asistente web en línea</span></div></div>
+        <p>Orientación inicial para operaciones, automatización e IA aplicada.</p>
+      </header>
+      <div class="web-chat-log" id="web-chat-log" role="log" aria-live="polite" aria-relevant="additions">
+        <div class="web-chat-message is-assistant">
+          <span class="web-chat-avatar" aria-hidden="true">P</span>
+          <div><p>Hola. Puedo orientarte en menos de un minuto y dejar el siguiente paso listo.</p><small>PARMUX AI</small></div>
+        </div>
+      </div>
+      <div class="web-chat-actions" id="web-chat-actions" aria-label="Opciones de conversación">
+        <button type="button" data-chat-action="diagnostic">Quiero un diagnóstico</button>
+        <button type="button" data-chat-action="solutions">Ver soluciones</button>
+        <button type="button" data-chat-action="expert">Hablar con un experto</button>
+      </div>
+      <form class="web-chat-composer" id="web-chat-form">
+        <label class="sr-only" for="web-chat-input">Escribe tu mensaje</label>
+        <textarea id="web-chat-input" rows="1" maxlength="1200" placeholder="Cuéntanos qué quieres mejorar…" required></textarea>
+        <button type="submit" aria-label="Enviar mensaje"><span aria-hidden="true">↑</span></button>
+      </form>
+      <div class="web-chat-footer">
+        <span id="web-chat-status" role="status" aria-live="polite">Tus mensajes se usan sólo para orientar esta conversación.</span>
+        <a id="web-chat-whatsapp" href="https://wa.me/56961597939?text=Hola%20PARMUX%20AI%2C%20quiero%20continuar%20una%20conversaci%C3%B3n%20iniciada%20en%20parmux.com." target="_blank" rel="noreferrer">Continuar en WhatsApp <strong>+56 9 6159 7939</strong></a>
+      </div>
     </div>
-    <label class="dialog-field"><span>Tu mensaje</span><textarea id="whatsapp-message" rows="4">Hola PARMUX AI, quiero conversar sobre un proyecto.</textarea></label>
-    <a class="dialog-primary" id="whatsapp-continue" href="https://wa.me/56961597939?text=Hola%20PARMUX%20AI%2C%20quiero%20conversar%20sobre%20un%20proyecto." target="_blank" rel="noreferrer">Continuar en WhatsApp <span>→</span></a>
-    <small class="dialog-note">Número oficial: +56 9 6159 7939</small>
   </dialog>
 
   <dialog class="contact-dialog lead-dialog" id="lead-dialog" aria-labelledby="lead-dialog-title">
@@ -202,6 +216,6 @@
   </dialog>
 
   <footer><strong>PARMUX <span class="brand-ai">AI</span></strong><span>Viña del Mar, Chile · <a href="mailto:contacto@parmux.com">contacto@parmux.com</a> · <a href="mailto:negocios@parmux.com">negocios@parmux.com</a></span><nav><a href="legal/privacidad.html">Privacidad</a><a href="legal/terminos.html">Términos</a><a href="legal/cookies.html">Cookies</a><a href="legal/eliminacion-datos.html">Eliminar datos</a></nav></footer>
-  <script src="campaign.js?v=20260829-contact-funnel-2"></script>
+  <script src="campaign.js?v=20260829-web-chat-1"></script>
 </body>
 </html>
