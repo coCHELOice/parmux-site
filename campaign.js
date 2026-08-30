@@ -389,15 +389,11 @@ leadForm?.addEventListener('submit', async (event) => {
   }
 
   const payload = Object.fromEntries(formData.entries());
-  payload._subject = `Nuevo diagnóstico PARMUX · ${payload.razon_social || 'Empresa'} · ${payload.interes || 'Consulta'}`;
-  payload._replyto = payload.email;
-  payload._template = 'table';
   payload._url = window.location.href;
   payload.origen = leadSource;
-  payload.tipo_solicitud = 'Ficha de diagnóstico empresarial';
 
   try {
-    const response = await fetch('https://formsubmit.co/ajax/negocios@parmux.com', {
+    const response = await fetch('/api/diagnostico', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -406,7 +402,7 @@ leadForm?.addEventListener('submit', async (event) => {
       body: JSON.stringify(payload)
     });
     const result = await response.json();
-    const delivered = result.success === true || result.success === 'true';
+    const delivered = result.success === true;
     if (!response.ok || !delivered) throw new Error('form_delivery_failed');
 
     leadForm.reset();
