@@ -97,7 +97,7 @@ footer .brand-ai {
   width: auto;
   height: 40px;
   padding: 0 18px;
-  gap: 28px;
+  gap: 12px;
   color: white;
   border-radius: 999px;
   background: var(--campaign-violet);
@@ -105,9 +105,20 @@ footer .brand-ai {
   transition: transform .25s, box-shadow .25s;
 }
 
+.campaign-header .top-cta svg {
+  flex: 0 0 16px;
+  fill: currentColor;
+  transition: transform .25s;
+}
+
 .campaign-header .top-cta:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 28px rgba(184, 60, 244, .34);
+}
+
+.campaign-header .top-cta:hover svg,
+.campaign-header .top-cta:focus-visible svg {
+  transform: scale(1.1);
 }
 
 .campaign-menu-toggle,
