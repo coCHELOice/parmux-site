@@ -1,0 +1,95 @@
+/* PARMUX footer/email presentation hotfix — 2026-08-31
+   Isolated from campaign.css to minimize merge conflicts with concurrent work. */
+
+@media (max-width: 1180px) {
+  footer {
+    min-height: 0;
+    padding: 30px max(24px, 4vw) 92px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "brand contact"
+      "nav nav";
+    align-items: start;
+    gap: 20px 34px;
+  }
+
+  footer > strong {
+    grid-area: brand;
+    white-space: nowrap;
+  }
+
+  footer > span {
+    grid-area: contact;
+    min-width: 0;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+
+  footer > span a {
+    white-space: nowrap;
+  }
+
+  footer nav {
+    grid-area: nav;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+  }
+
+  .chat-fab {
+    right: max(14px, env(safe-area-inset-right));
+    bottom: max(14px, env(safe-area-inset-bottom));
+    width: 52px;
+    height: 52px;
+    min-height: 52px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .chat-fab > span:first-child {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+  }
+
+  .chat-fab-copy {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  footer {
+    padding: 28px 20px 86px;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "brand"
+      "contact"
+      "nav";
+    gap: 14px;
+  }
+
+  footer > span {
+    font-size: 12px;
+    line-height: 1.75;
+  }
+
+  footer nav {
+    gap: 10px 18px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .chat-fab {
+    width: 48px;
+    height: 48px;
+    min-height: 48px;
+  }
+
+  .chat-fab > span:first-child {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+  }
+}
