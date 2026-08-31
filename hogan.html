@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cuestionario de configuración · Farmacia HOGAN | PARMUX</title>
+  <meta name="description" content="Cuestionario breve para definir una automatización controlada para el piloto de Farmacia HOGAN.">
+  <link rel="stylesheet" href="campaign.css"><link rel="stylesheet" href="hogan.css">
+</head>
+<body class="hogan-page">
+  <main class="hogan-shell">
+    <a class="hogan-back" href="index.html">← PARMUX</a>
+    <header class="hogan-hero"><p class="dialog-eyebrow">Configuración del piloto · Farmacia HOGAN</p><h1>Definamos juntos una automatización segura.</h1><p>Este formulario nos permite configurar respuestas únicamente con información y reglas aprobadas por HOGAN. Completarlo toma unos minutos y toda la coordinación puede hacerse por escrito.</p><div class="hogan-pilot"><strong>Piloto de 30 días · $59.900 + IVA</strong><span>Sin permanencia · WhatsApp independiente · Sin integración inicial con inventario</span><span>Continuidad: $49.900 + IVA mensuales</span></div></header>
+    <form id="hogan-form" class="hogan-form" novalidate>
+      <section><h2><span>01</span> Farmacia y responsable</h2><div class="hogan-grid"><label>Nombre de la farmacia<input name="farmacia" value="Farmacia HOGAN" required></label><label>Persona responsable<input name="responsable" autocomplete="name" required></label><label>Email para coordinación<input type="email" name="email" autocomplete="email" required></label><label>Canal escrito de derivaciones<input name="canal_derivacion" placeholder="Ej.: WhatsApp independiente o email" required></label></div></section>
+      <section><h2><span>02</span> Atención y consultas</h2><div class="hogan-grid"><label>Horarios de atención<textarea name="horarios" rows="2" required></textarea></label><label>Canales que atenderá el piloto<textarea name="canales" rows="2" placeholder="WhatsApp, web, etc." required></textarea></label><label class="wide">Consultas frecuentes y respuesta autorizada<textarea name="faq_respuestas" rows="5" placeholder="Una consulta por línea, con la respuesta exacta que HOGAN aprueba." required></textarea></label></div></section>
+      <section><h2><span>03</span> Reglas y límites</h2><div class="hogan-grid"><label>¿Qué nunca debe afirmar o responder automáticamente?<textarea name="limites" rows="4" required></textarea></label><label>Casos que deben derivarse inmediatamente<textarea name="derivacion_inmediata" rows="4" placeholder="Urgencias, reacciones adversas, dudas clínicas, reclamos…" required></textarea></label><label class="wide">Medicamentos, recetas, disponibilidad y reservas<textarea name="reglas_medicamentos" rows="5" placeholder="Qué puede informar, qué debe confirmar una persona y cómo reservar." required></textarea></label><label class="wide">Cómo tratar información incierta o no confirmada<textarea name="informacion_incierta" rows="3" required></textarea></label></div></section>
+      <section><h2><span>04</span> Voz y pruebas</h2><div class="hogan-grid"><label>Tono de comunicación<textarea name="tono" rows="3" placeholder="Ej.: cercano, claro, prudente, chileno…" required></textarea></label><label>Responsable que revisa derivaciones<input name="responsable_derivaciones" required></label><label class="wide">Ejemplos reales para probar el sistema<textarea name="ejemplos_prueba" rows="5" placeholder="Incluye preguntas habituales y el resultado esperado. No incluyas datos personales de pacientes." required></textarea></label></div></section>
+      <label class="hogan-consent"><input type="checkbox" name="aprobacion" value="Confirmado" required><span>Confirmo que esta información será revisada y aprobada por HOGAN antes de activar el piloto. Entiendo que una respuesta incorrecta puede ser más grave que una respuesta tardía; los casos inciertos, regulados o que requieran criterio se derivarán a una persona. Esta automatización no reemplaza el inventario y una integración posterior se evaluará sólo si HOGAN la necesita.</span></label>
+      <input class="form-honey" name="_honey" tabindex="-1" autocomplete="off"><button class="dialog-primary" type="submit">Enviar configuración <span>→</span></button><p id="hogan-status" class="form-status" role="status" aria-live="polite"></p>
+    </form>
+    <footer class="hogan-footer">PARMUX AI · Viña del Mar, Chile · <a href="mailto:negocios@parmux.com">negocios@parmux.com</a></footer>
+  </main><script src="hogan.js"></script>
+</body></html>
