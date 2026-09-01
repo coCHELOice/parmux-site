@@ -14,6 +14,12 @@
   const csrf = document.querySelector('meta[name="triagevet-csrf"]')?.content || '';
   let step = 0;
 
+  const securityNote = document.createElement('div');
+  securityNote.className = 'note';
+  securityNote.innerHTML = '<strong>Confidencialidad y seguridad</strong><span>Toda la información ingresada se trata como estrictamente confidencial y está protegida mediante acceso privado, transmisión cifrada por HTTPS, sesión segura y controles contra accesos no autorizados. No solicitamos datos personales ni clínicos identificables de pacientes.</span>';
+  const introNote = intro?.querySelector('.note');
+  if (introNote) introNote.after(securityNote);
+
   const all = (name) => [...form.querySelectorAll(`[name="${CSS.escape(name)}"]`)];
   const radio = (name) => form.querySelector(`[name="${CSS.escape(name)}"]:checked`)?.value || '';
   const checks = (name) => all(name).filter((x) => x.checked).map((x) => x.value);
@@ -273,6 +279,9 @@
       try { localStorage.removeItem(STORE); } catch { /* storage is optional */ }
       workspace.hidden = true;
       success.hidden = false;
+      const successSecurity = document.createElement('p');
+      successSecurity.innerHTML = '<strong>Confidencialidad y seguridad</strong><br>La información recibida se mantiene bajo controles estrictos de acceso, seguridad y confidencialidad, con transmisión cifrada mediante HTTPS.';
+      success.appendChild(successSecurity);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch {
       error.textContent = 'No pudimos enviar el diagnóstico. Tus respuestas siguen guardadas en este dispositivo; puedes volver a intentarlo.';
