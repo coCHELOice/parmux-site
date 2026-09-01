@@ -4,8 +4,8 @@
     { "source": "/hogan", "destination": "/api/hogan" },
     { "source": "/hogan/", "destination": "/api/hogan" },
     { "source": "/hogan.html", "destination": "/api/hogan" },
-    { "source": "/triagevet/diagnostico", "destination": "/api/triagevet-discovery-v3" },
-    { "source": "/triagevet/diagnostico/", "destination": "/api/triagevet-discovery-v3" }
+    { "source": "/triagevet/diagnostico", "destination": "/api/triagevet-discovery-entry" },
+    { "source": "/triagevet/diagnostico/", "destination": "/api/triagevet-discovery-entry" }
   ],
   "headers": [
     {
