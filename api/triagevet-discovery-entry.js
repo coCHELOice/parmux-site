@@ -80,12 +80,30 @@ function trustFooter() {
 function installTrustFooter(res) {
   const originalSend = res.send.bind(res);
   res.send = (body) => {
-    if (typeof body !== 'string' || !body.includes('</main>')) return originalSend(body);
+    if (
+      typeof body !== 'string'
+      || !body.includes('id="intro"')
+      || !body.includes('id="workspace"')
+    ) {
+      return originalSend(body);
+    }
+
     let output = body;
     if (!output.includes('/triagevet-trust.css')) {
-      output = output.replace('</head>', '  <link rel="stylesheet" href="/triagevet-trust.css?v=1">\n</head>');
+      output = output.replace(
+        '</head>',
+        '  <link rel="stylesheet" href="/triagevet-trust.css?v=2">\n</head>',
+      );
     }
-    output = output.replace('</main>', `${trustFooter()}\n</main>`);
+
+    const introEnd = '  </section>\n\n  <div class="workspace"';
+    if (output.includes(introEnd)) {
+      output = output.replace(
+        introEnd,
+        `${trustFooter()}\n  </section>\n\n  <div class="workspace"`,
+      );
+    }
+
     return originalSend(output);
   };
 }
@@ -104,7 +122,7 @@ module.exports = async function handler(req, res) {
     res.setHeader('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
-    res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive,nosnippet');
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
     res.setHeader('Location', '/triagevet/diagnostico');
     return res.status(302).end();
   }
