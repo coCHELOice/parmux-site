@@ -56,64 +56,38 @@ function unavailable(res) {
 </html>`);
 }
 
-function secureWelcome(res, cookie) {
-  baseHeaders(res);
-  res.setHeader('Set-Cookie', cookie);
-  return res.status(200).send(`<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
-  <meta name="referrer" content="no-referrer">
-  <title>Diagnóstico privado · Pet House × TriageVet</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/triagevet-discovery.css">
-</head>
-<body>
-  <main class="shell">
-    <header class="top">
-      <a class="brand" href="/"><span class="mark">P</span><span><strong>PARMUX</strong><small>TriageVet</small></span></a>
-      <span class="badge">Acceso privado · Pet House</span>
-    </header>
-
-    <section class="intro">
-      <p class="eyebrow">Pet House × TriageVet</p>
-      <h1>Primero, confidencialidad y seguridad.</h1>
-      <p class="lead">Antes de solicitar cualquier información sobre la operación de Pet House, queremos dejar explícito cómo protegemos este diagnóstico.</p>
-
-      <div class="note">
-        <strong>Información estrictamente confidencial</strong>
-        <span>La información ingresada se utiliza únicamente para comprender la operación de la clínica y preparar una demostración y propuesta pertinentes. El acceso a este diagnóstico es privado y restringido.</span>
+function trustFooter() {
+  return `<footer class="trust-footer" aria-label="Seguridad y tecnologías PARMUX">
+    <div class="trust-footer__row">
+      <div class="trust-footer__copy">
+        <strong>Seguridad y confidencialidad</strong>
+        <span>Acceso privado · conexión cifrada HTTPS/TLS · sesión segura · diagnóstico no indexado. La información se utiliza únicamente para esta evaluación y no solicitamos datos identificables de pacientes.</span>
       </div>
-
-      <div class="note">
-        <strong>Transmisión cifrada y acceso protegido</strong>
-        <span>La información se transmite mediante conexión cifrada HTTPS/TLS y el acceso utiliza una sesión segura con controles contra accesos no autorizados. El diagnóstico no es indexado públicamente.</span>
+      <div class="trust-footer__tech">
+        <p class="trust-footer__label">Tecnologías utilizadas en nuestra infraestructura</p>
+        <div class="trust-footer__seals" aria-label="Infraestructura tecnológica">
+          <span class="tech-seal"><img src="/assets/tech/cloudflare.svg" alt="Cloudflare"><span>Cloudflare</span></span>
+          <span class="tech-seal"><img src="/assets/tech/google-cloud.svg" alt="Google Cloud"><span>Google Cloud</span></span>
+          <span class="tech-seal"><img src="/assets/tech/vercel.svg" alt="Vercel"><span>Vercel</span></span>
+          <span class="tech-seal"><img src="/assets/tech/supabase.svg" alt="Supabase"><span>Supabase</span></span>
+          <span class="tech-seal"><img src="/assets/tech/meta.svg" alt="Meta"><span>Meta</span></span>
+        </div>
       </div>
+    </div>
+  </footer>`;
+}
 
-      <div class="note">
-        <strong>Sin datos identificables de pacientes</strong>
-        <span>No solicitamos nombres, fichas clínicas, RUT, teléfonos, antecedentes clínicos identificables ni ningún otro dato personal de pacientes o tutores. Las respuestas pueden ser operacionales y aproximadas.</span>
-      </div>
-
-      <div class="facts">
-        <span>Acceso privado</span>
-        <span>HTTPS/TLS</span>
-        <span>Sesión segura</span>
-        <span>Confidencialidad</span>
-        <span>Sin datos de pacientes</span>
-      </div>
-
-      <form action="/triagevet/diagnostico" method="get">
-        <button class="primary" type="submit">Entendido · comenzar diagnóstico →</button>
-      </form>
-    </section>
-  </main>
-</body>
-</html>`);
+function installTrustFooter(res) {
+  const originalSend = res.send.bind(res);
+  res.send = (body) => {
+    if (typeof body !== 'string' || !body.includes('</main>')) return originalSend(body);
+    let output = body;
+    if (!output.includes('/triagevet-trust.css')) {
+      output = output.replace('</head>', '  <link rel="stylesheet" href="/triagevet-trust.css?v=1">\n</head>');
+    }
+    output = output.replace('</main>', `${trustFooter()}\n</main>`);
+    return originalSend(output);
+  };
 }
 
 module.exports = async function handler(req, res) {
@@ -123,12 +97,18 @@ module.exports = async function handler(req, res) {
   if (method === 'GET' && access) {
     if (!validToken(access)) return unavailable(res);
 
-    // Lax is intentional: this link is normally opened from email, WhatsApp or
-    // another messaging app. The token itself remains private, hashed server-side,
-    // and the established session remains HttpOnly + Secure.
+    // SameSite=Lax allows a private link opened from email, WhatsApp or another
+    // external app to establish its secure session on the immediate redirect.
     const cookie = `${SESSION_COOKIE}=${encodeURIComponent(access)}; Path=/; Max-Age=${SESSION_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`;
-    return secureWelcome(res, cookie);
+    res.setHeader('Set-Cookie', cookie);
+    res.setHeader('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive,nosnippet');
+    res.setHeader('Location', '/triagevet/diagnostico');
+    return res.status(302).end();
   }
 
+  if (method === 'GET') installTrustFooter(res);
   return discoveryHandler(req, res);
 };
