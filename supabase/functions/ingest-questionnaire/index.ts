@@ -1,9 +1,18 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import * as jose from 'npm:jose@6.2.10';
 
 const TABLE = 'parmux_questionnaire_submissions';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const MAX_BODY_BYTES = 96 * 1024;
-const INGEST_TOKEN_SHA256 = '601614b8b52d6bdc2153d70624e57f106006fa6adad03a93866403a59c0caaaa';
+const VERCEL_TEAM_SLUG = 'avenidalibertarias-projects';
+const VERCEL_PROJECT = 'parmux-site';
+const VERCEL_PROJECT_ID = 'prj_E4P7e5uTzKT3CRy5YXgdbHMZ2x3Z';
+const VERCEL_TEAM_ID = 'team_XONRduQZeKrZ1BaidsmyRy9V';
+const VERCEL_ISSUER = `https://oidc.vercel.com/${VERCEL_TEAM_SLUG}`;
+const VERCEL_AUDIENCE = `https://vercel.com/${VERCEL_TEAM_SLUG}`;
+const VERCEL_JWKS = jose.createRemoteJWKSet(
+  new URL(`https://oidc.vercel.com/${VERCEL_TEAM_SLUG}/.well-known/jwks`),
+);
 
 function json(status: number, body: Record<string, unknown>) {
   return new Response(JSON.stringify(body), {
@@ -15,27 +24,25 @@ function json(status: number, body: Record<string, unknown>) {
   });
 }
 
-function bytesToHex(bytes: ArrayBuffer) {
-  return [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
-}
-
-function constantTimeEqual(left: string, right: string) {
-  if (left.length !== right.length) return false;
-  let difference = 0;
-  for (let index = 0; index < left.length; index += 1) {
-    difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
-  }
-  return difference === 0;
-}
-
 async function authorized(req: Request) {
   const authorization = req.headers.get('authorization') || '';
   if (!authorization.startsWith('Bearer ')) return false;
-  const digest = await crypto.subtle.digest(
-    'SHA-256',
-    new TextEncoder().encode(authorization.slice(7)),
-  );
-  return constantTimeEqual(bytesToHex(digest), INGEST_TOKEN_SHA256);
+  try {
+    const { payload } = await jose.jwtVerify(authorization.slice(7), VERCEL_JWKS, {
+      issuer: VERCEL_ISSUER,
+      audience: VERCEL_AUDIENCE,
+    });
+    const environment = String(payload.environment || '');
+    const expectedSubject = `owner:${VERCEL_TEAM_SLUG}:project:${VERCEL_PROJECT}:environment:${environment}`;
+    return (environment === 'preview' || environment === 'production')
+      && payload.sub === expectedSubject
+      && payload.owner === VERCEL_TEAM_SLUG
+      && payload.owner_id === VERCEL_TEAM_ID
+      && payload.project === VERCEL_PROJECT
+      && payload.project_id === VERCEL_PROJECT_ID;
+  } catch {
+    return false;
+  }
 }
 
 function validCreate(record: Record<string, unknown>) {
