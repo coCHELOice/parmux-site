@@ -2,11 +2,24 @@
 
 Este archivo define la fuente de verdad para los canales de contacto de `parmux.com`.
 
+## Datos de la empresa en el pie de la pagina
+
+Datos proporcionados y aprobados por el titular el 2 de septiembre de 2026:
+
+- Nombre legal: `PARMUX SPA`
+- Direccion: `VILLANELO 180 OF 606`
+- Ciudad, region y codigo postal: `VINA DEL MAR, Valparaíso 2520000`
+- Pais: `Chile`
+- Telefono del negocio: `+56991020231` (enlace `tel:+56991020231`)
+- Sitio web: `https://parmux.com/`
+
+El telefono del negocio se muestra como tal; no sustituye al WhatsApp operativo ni debe convertirse en un enlace `wa.me`.
+
 ## WhatsApp oficial unico
 
 - Numero visible: `+56 9 6159 7939`
 - Numero para enlaces `wa.me`: `56961597939`
-- No publicar ni reutilizar otros numeros en la landing, paginas legales o propuestas.
+- No publicar ni reutilizar otros numeros como WhatsApp en la landing, paginas legales o propuestas. El telefono del negocio indicado arriba es un canal separado, aprobado para el pie de la pagina.
 
 ## Correos publicos
 
