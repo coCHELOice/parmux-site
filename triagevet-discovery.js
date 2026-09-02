@@ -2,6 +2,7 @@
 
 (() => {
   const STORE = 'parmux:triagevet:pet-house:v3';
+  const SUBMISSION_ID_STORE = `${STORE}:submission-id`;
   const form = document.querySelector('#discovery-form');
   if (!form) return;
 
@@ -131,6 +132,28 @@
     document.querySelector('#facebook').hidden = !channels.includes('Facebook / Messenger');
   }
 
+  function newSubmissionId() {
+    if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+    const bytes = new Uint8Array(16);
+    globalThis.crypto.getRandomValues(bytes);
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const hex = [...bytes].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  }
+
+  function submissionId() {
+    try {
+      const stored = localStorage.getItem(SUBMISSION_ID_STORE);
+      if (stored) return stored;
+      const created = newSubmissionId();
+      localStorage.setItem(SUBMISSION_ID_STORE, created);
+      return created;
+    } catch {
+      return newSubmissionId();
+    }
+  }
+
   function data() {
     const scalar = [
       'clinic_name', 'client_id', 'main_channel', 'channel_friction', 'channel_friction_detail',
@@ -148,6 +171,7 @@
       .forEach((name) => { result[name] = checks(name); });
     result.whatsapp_numbers = readWhatsapp();
     result.consent = form.querySelector('[name="consent"]:checked')?.value || '';
+    result.submission_id = submissionId();
     result._step = step;
     return result;
   }
@@ -276,7 +300,10 @@
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || result.ok !== true) throw new Error('send_failed');
-      try { localStorage.removeItem(STORE); } catch { /* storage is optional */ }
+      try {
+        localStorage.removeItem(STORE);
+        localStorage.removeItem(SUBMISSION_ID_STORE);
+      } catch { /* storage is optional */ }
       workspace.hidden = true;
       success.hidden = false;
       const successSecurity = document.createElement('p');
