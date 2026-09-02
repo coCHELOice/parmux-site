@@ -6,6 +6,10 @@ module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store, max-age=0');
   res.setHeader('X-Content-Type-Options', 'nosniff');
 
+  if (process.env.VERCEL_ENV === 'production') {
+    return res.status(404).json({ ok: false, error: 'not_found' });
+  }
+
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
     return res.status(405).json({ ok: false, error: 'method_not_allowed' });
