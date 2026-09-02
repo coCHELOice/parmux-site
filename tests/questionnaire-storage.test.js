@@ -15,7 +15,7 @@ const ORIGINAL_ENV = { ...process.env };
 
 beforeEach(() => {
   process.env.SUPABASE_QUESTIONNAIRE_INGEST_URL = 'https://example.supabase.co/functions/v1/ingest-questionnaire';
-  process.env.QUESTIONNAIRE_INGEST_SECRET = 'a-secure-ingest-secret-with-at-least-32-bytes';
+  process.env.QUESTIONNAIRE_INGEST_TOKEN = 'a-secure-ingest-token-with-at-least-32-bytes';
   process.env.HETZNER_QUESTIONNAIRE_BACKUP_URL = 'https://backup.parmux.test/submissions';
   process.env.HETZNER_QUESTIONNAIRE_BACKUP_TOKEN = 'backup-token';
   process.env.HETZNER_BACKUP_ENCRYPTION_KEY = Buffer.alloc(32, 7).toString('base64');
@@ -34,9 +34,9 @@ test('submissionId accepts UUID and rejects arbitrary values', () => {
   assert.throws(() => submissionId({ submission_id: 'not-an-id' }), /invalid_submission_id/);
 });
 
-test('ingestRequest signs the exact body without exposing a database key', () => {
+test('ingestRequest authenticates without exposing a database key', () => {
   const request = ingestRequest({ action: 'test' });
-  assert.match(request.headers['X-Parmux-Signature'], /^sha256=[a-f0-9]{64}$/);
+  assert.equal(request.headers.Authorization, `Bearer ${process.env.QUESTIONNAIRE_INGEST_TOKEN}`);
   assert.equal(request.url, process.env.SUPABASE_QUESTIONNAIRE_INGEST_URL);
   assert.ok(!JSON.stringify(request).includes('service_role'));
 });
