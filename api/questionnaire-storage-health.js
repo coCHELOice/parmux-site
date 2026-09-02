@@ -15,7 +15,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const request = ingestRequest({ action: 'health' });
+    const request = await ingestRequest({ action: 'health' });
     const response = await fetch(request.url, {
       method: 'POST',
       headers: request.headers,
