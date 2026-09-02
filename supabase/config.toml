@@ -1,0 +1,2 @@
+[functions.ingest-questionnaire]
+verify_jwt = false
