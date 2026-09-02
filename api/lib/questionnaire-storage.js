@@ -8,6 +8,7 @@ const {
 
 const TABLE = 'parmux_questionnaire_submissions';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const DEFAULT_INGEST_URL = 'https://rqdmvbtoxxndhuuyrwnh.supabase.co/functions/v1/ingest-questionnaire';
 
 function sha256(value) {
   return createHash('sha256').update(value, 'utf8').digest('hex');
@@ -35,14 +36,14 @@ function submissionId(data) {
 
 function ingestRequest(payload) {
   const body = JSON.stringify(payload);
-  const token = requiredEnv('QUESTIONNAIRE_INGEST_TOKEN');
+  const token = requiredEnv('VERCEL_OIDC_TOKEN');
   return {
     body,
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    url: requiredEnv('SUPABASE_QUESTIONNAIRE_INGEST_URL'),
+    url: String(process.env.SUPABASE_QUESTIONNAIRE_INGEST_URL || DEFAULT_INGEST_URL).trim(),
   };
 }
 
