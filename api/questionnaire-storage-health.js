@@ -24,11 +24,20 @@ module.exports = async function handler(req, res) {
     });
     if (!response.ok) {
       console.error(`[QUESTIONNAIRE_STORAGE_HEALTH] upstream_${response.status}`);
-      return res.status(503).json({ ok: false, error: 'storage_unavailable' });
+      return res.status(503).json({
+        ok: false,
+        error: 'storage_unavailable',
+        diagnostic: `upstream_${response.status}`,
+      });
     }
     return res.status(200).json({ ok: true, storage: 'reachable', auth: 'vercel_oidc' });
   } catch (error) {
-    console.error(`[QUESTIONNAIRE_STORAGE_HEALTH] ${error instanceof Error ? error.message : 'unknown'}`);
-    return res.status(503).json({ ok: false, error: 'storage_unavailable' });
+    const message = error instanceof Error ? error.message : 'unknown';
+    console.error(`[QUESTIONNAIRE_STORAGE_HEALTH] ${message}`);
+    return res.status(503).json({
+      ok: false,
+      error: 'storage_unavailable',
+      diagnostic: message === 'missing_vercel_oidc_token' ? 'oidc_missing' : 'request_failed',
+    });
   }
 };
