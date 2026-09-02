@@ -3,6 +3,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const TABLE = 'parmux_questionnaire_submissions';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const MAX_BODY_BYTES = 96 * 1024;
+const INGEST_TOKEN_SHA256 = '818ba3b920a3d0ea12a9fed40f871858b908dd44609337d705a1e2a71fc91e6f';
 
 function json(status: number, body: Record<string, unknown>) {
   return new Response(JSON.stringify(body), {
@@ -27,23 +28,14 @@ function constantTimeEqual(left: string, right: string) {
   return difference === 0;
 }
 
-async function authorized(req: Request, body: string) {
-  const timestamp = req.headers.get('x-parmux-timestamp') || '';
-  const supplied = req.headers.get('x-parmux-signature') || '';
-  const timestampMs = Number(timestamp);
-  if (!Number.isFinite(timestampMs) || Math.abs(Date.now() - timestampMs) > 5 * 60 * 1000) return false;
-
-  const secret = Deno.env.get('QUESTIONNAIRE_INGEST_SECRET') || '';
-  if (secret.length < 32) return false;
-  const key = await crypto.subtle.importKey(
-    'raw',
-    new TextEncoder().encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
+async function authorized(req: Request) {
+  const authorization = req.headers.get('authorization') || '';
+  if (!authorization.startsWith('Bearer ')) return false;
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(authorization.slice(7)),
   );
-  const digest = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`${timestamp}.${body}`));
-  return constantTimeEqual(supplied, `sha256=${bytesToHex(digest)}`);
+  return constantTimeEqual(bytesToHex(digest), INGEST_TOKEN_SHA256);
 }
 
 function validCreate(record: Record<string, unknown>) {
@@ -64,7 +56,7 @@ Deno.serve(async (req) => {
   if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
     return json(413, { ok: false, error: 'body_too_large' });
   }
-  if (!(await authorized(req, rawBody))) return json(401, { ok: false, error: 'unauthorized' });
+  if (!(await authorized(req))) return json(401, { ok: false, error: 'unauthorized' });
 
   let input: Record<string, unknown>;
   try {
