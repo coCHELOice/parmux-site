@@ -89,6 +89,10 @@ Deno.serve(async (req) => {
     { auth: { persistSession: false, autoRefreshToken: false } },
   );
 
+  if (input.action === 'health') {
+    return json(200, { ok: true, auth: 'vercel_oidc' });
+  }
+
   if (input.action === 'create') {
     const record = input.record as Record<string, unknown>;
     if (!record || !validCreate(record)) return json(400, { ok: false, error: 'invalid_record' });
