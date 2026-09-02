@@ -1,4 +1,9 @@
 const { createHash, timingSafeEqual } = require('node:crypto');
+const {
+  persistPrimary,
+  replicateToHetzner,
+  updateDeliveryState,
+} = require('./lib/questionnaire-storage');
 
 const ACCESS_TOKEN_HASH = '4b3ba060403a4b21b68a89e0b3f638e1d918859f8a51e68ee990b3d71805b6db';
 const ACCESS_EXPIRES_AT = Date.parse('2026-10-16T02:59:59.000Z');
@@ -125,6 +130,7 @@ function validate(data) {
   if (!Array.isArray(data.priorities) || data.priorities.length < 1 || data.priorities.length > 3 || !data.top_impact) throw new Error('priorities');
   if (!data.contact_name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/u.test(data.contact_email || '')) throw new Error('contact');
   if (data.consent !== 'Confirmado') throw new Error('consent');
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(data.submission_id || '')) throw new Error('submission_id');
   return 'ok';
 }
 
@@ -416,12 +422,46 @@ module.exports = async function handler(req, res) {
       return json(res, 400, { ok: false, error: 'invalid_form' });
     }
 
+    let stored;
+    try {
+      stored = await persistPrimary(data);
+    } catch (error) {
+      console.error(`[TRIAGEVET_SUPABASE_ERROR] ${String(error.message || error).slice(0, 220)}`);
+      return json(res, 503, { ok: false, error: 'storage_unavailable' });
+    }
+
+    let backupStatus = 'not_configured';
+    try {
+      backupStatus = (await replicateToHetzner(stored)).status;
+    } catch (error) {
+      backupStatus = 'failed';
+      console.warn(`[TRIAGEVET_HETZNER_BACKUP_ERROR] id=${stored.id} ${String(error.message || error).slice(0, 160)}`);
+    }
+
+    let emailStatus = 'delivered';
     try {
       await deliver(data);
-      return json(res, 200, { ok: true });
-    } catch {
-      return json(res, 502, { ok: false, error: 'delivery_unavailable' });
+    } catch (error) {
+      emailStatus = 'failed';
+      console.warn(`[TRIAGEVET_EMAIL_ERROR] id=${stored.id} ${String(error.message || error).slice(0, 160)}`);
     }
+
+    try {
+      await updateDeliveryState(stored.id, {
+        email_status: emailStatus,
+        hetzner_backup_status: backupStatus,
+      });
+    } catch (error) {
+      console.warn(`[TRIAGEVET_STATUS_UPDATE_ERROR] id=${stored.id} ${String(error.message || error).slice(0, 160)}`);
+    }
+
+    return json(res, 200, {
+      ok: true,
+      stored: true,
+      delivered: emailStatus === 'delivered',
+      backedUp: backupStatus === 'stored',
+      submissionId: stored.id,
+    });
   }
 
   res.setHeader('Allow', 'GET, POST');
