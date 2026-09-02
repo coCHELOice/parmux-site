@@ -34,16 +34,16 @@ test('submissionId accepts UUID and rejects arbitrary values', () => {
   assert.throws(() => submissionId({ submission_id: 'not-an-id' }), /invalid_submission_id/);
 });
 
-test('ingestRequest authenticates with the short-lived Vercel OIDC token', () => {
-  const request = ingestRequest({ action: 'test' });
+test('ingestRequest authenticates with the short-lived Vercel OIDC token', async () => {
+  const request = await ingestRequest({ action: 'test' });
   assert.equal(request.headers.Authorization, `Bearer ${process.env.VERCEL_OIDC_TOKEN}`);
   assert.equal(request.url, process.env.SUPABASE_QUESTIONNAIRE_INGEST_URL);
   assert.ok(!JSON.stringify(request).includes('service_role'));
 });
 
-test('ingestRequest uses the fixed public Supabase endpoint when no override exists', () => {
+test('ingestRequest uses the fixed public Supabase endpoint when no override exists', async () => {
   delete process.env.SUPABASE_QUESTIONNAIRE_INGEST_URL;
-  const request = ingestRequest({ action: 'test' });
+  const request = await ingestRequest({ action: 'test' });
   assert.equal(request.url, 'https://rqdmvbtoxxndhuuyrwnh.supabase.co/functions/v1/ingest-questionnaire');
 });
 
