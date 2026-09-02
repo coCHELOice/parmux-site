@@ -34,9 +34,17 @@ function submissionId(data) {
   return value.toLowerCase();
 }
 
-function ingestRequest(payload) {
+async function vercelOidcToken() {
+  if (process.env.VERCEL_OIDC_TOKEN) return process.env.VERCEL_OIDC_TOKEN;
+  const { getVercelOidcToken } = await import('@vercel/oidc');
+  const token = await getVercelOidcToken();
+  if (!token) throw new Error('missing_vercel_oidc_token');
+  return token;
+}
+
+async function ingestRequest(payload) {
   const body = JSON.stringify(payload);
-  const token = requiredEnv('VERCEL_OIDC_TOKEN');
+  const token = await vercelOidcToken();
   return {
     body,
     headers: {
@@ -66,7 +74,7 @@ async function persistPrimary(data, fetchImpl = globalThis.fetch) {
     updated_at: capturedAt,
   };
 
-  const request = ingestRequest({ action: 'create', record });
+  const request = await ingestRequest({ action: 'create', record });
   const response = await fetchImpl(request.url, {
     method: 'POST',
     headers: request.headers,
@@ -93,7 +101,7 @@ async function updateDeliveryState(id, fields, fetchImpl = globalThis.fetch) {
   const patch = Object.fromEntries(Object.entries(fields).filter(([key]) => allowed.includes(key)));
   patch.updated_at = new Date().toISOString();
 
-  const request = ingestRequest({ action: 'update_delivery', id, patch });
+  const request = await ingestRequest({ action: 'update_delivery', id, patch });
   const response = await fetchImpl(request.url, {
     method: 'POST',
     headers: request.headers,
