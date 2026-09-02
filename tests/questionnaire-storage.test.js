@@ -15,7 +15,7 @@ const ORIGINAL_ENV = { ...process.env };
 
 beforeEach(() => {
   process.env.SUPABASE_QUESTIONNAIRE_INGEST_URL = 'https://example.supabase.co/functions/v1/ingest-questionnaire';
-  process.env.QUESTIONNAIRE_INGEST_TOKEN = 'a-secure-ingest-token-with-at-least-32-bytes';
+  process.env.VERCEL_OIDC_TOKEN = 'short-lived-vercel-oidc-token';
   process.env.HETZNER_QUESTIONNAIRE_BACKUP_URL = 'https://backup.parmux.test/submissions';
   process.env.HETZNER_QUESTIONNAIRE_BACKUP_TOKEN = 'backup-token';
   process.env.HETZNER_BACKUP_ENCRYPTION_KEY = Buffer.alloc(32, 7).toString('base64');
@@ -34,11 +34,17 @@ test('submissionId accepts UUID and rejects arbitrary values', () => {
   assert.throws(() => submissionId({ submission_id: 'not-an-id' }), /invalid_submission_id/);
 });
 
-test('ingestRequest authenticates without exposing a database key', () => {
+test('ingestRequest authenticates with the short-lived Vercel OIDC token', () => {
   const request = ingestRequest({ action: 'test' });
-  assert.equal(request.headers.Authorization, `Bearer ${process.env.QUESTIONNAIRE_INGEST_TOKEN}`);
+  assert.equal(request.headers.Authorization, `Bearer ${process.env.VERCEL_OIDC_TOKEN}`);
   assert.equal(request.url, process.env.SUPABASE_QUESTIONNAIRE_INGEST_URL);
   assert.ok(!JSON.stringify(request).includes('service_role'));
+});
+
+test('ingestRequest uses the fixed public Supabase endpoint when no override exists', () => {
+  delete process.env.SUPABASE_QUESTIONNAIRE_INGEST_URL;
+  const request = ingestRequest({ action: 'test' });
+  assert.equal(request.url, 'https://rqdmvbtoxxndhuuyrwnh.supabase.co/functions/v1/ingest-questionnaire');
 });
 
 test('persistPrimary performs an idempotent server-side Supabase insert', async () => {
