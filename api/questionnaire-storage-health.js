@@ -10,10 +10,6 @@ module.exports = async function handler(req, res) {
     res.setHeader('Allow', 'GET');
     return res.status(405).json({ ok: false, error: 'method_not_allowed' });
   }
-  if (process.env.VERCEL_ENV === 'production') {
-    return res.status(404).json({ ok: false, error: 'not_found' });
-  }
-
   try {
     const request = await ingestRequest({ action: 'health' });
     const response = await fetch(request.url, {
