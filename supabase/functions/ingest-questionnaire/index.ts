@@ -9,9 +9,13 @@ const VERCEL_PROJECT = 'parmux-site';
 const VERCEL_PROJECT_ID = 'prj_E4P7e5uTzKT3CRy5YXgdbHMZ2x3Z';
 const VERCEL_TEAM_ID = 'team_XONRduQZeKrZ1BaidsmyRy9V';
 const VERCEL_ISSUER = `https://oidc.vercel.com/${VERCEL_TEAM_SLUG}`;
+const VERCEL_GLOBAL_ISSUER = 'https://oidc.vercel.com';
 const VERCEL_AUDIENCE = `https://vercel.com/${VERCEL_TEAM_SLUG}`;
 const VERCEL_JWKS = jose.createRemoteJWKSet(
   new URL(`https://oidc.vercel.com/${VERCEL_TEAM_SLUG}/.well-known/jwks`),
+);
+const VERCEL_GLOBAL_JWKS = jose.createRemoteJWKSet(
+  new URL('https://oidc.vercel.com/.well-known/jwks'),
 );
 
 function json(status: number, body: Record<string, unknown>) {
@@ -27,22 +31,29 @@ function json(status: number, body: Record<string, unknown>) {
 async function authorized(req: Request) {
   const authorization = req.headers.get('authorization') || '';
   if (!authorization.startsWith('Bearer ')) return false;
-  try {
-    const { payload } = await jose.jwtVerify(authorization.slice(7), VERCEL_JWKS, {
-      issuer: VERCEL_ISSUER,
-      audience: VERCEL_AUDIENCE,
-    });
-    const environment = String(payload.environment || '');
-    const expectedSubject = `owner:${VERCEL_TEAM_SLUG}:project:${VERCEL_PROJECT}:environment:${environment}`;
-    return (environment === 'preview' || environment === 'production')
-      && payload.sub === expectedSubject
-      && payload.owner === VERCEL_TEAM_SLUG
-      && payload.owner_id === VERCEL_TEAM_ID
-      && payload.project === VERCEL_PROJECT
-      && payload.project_id === VERCEL_PROJECT_ID;
-  } catch {
-    return false;
+  const token = authorization.slice(7);
+  for (const [issuer, jwks] of [
+    [VERCEL_ISSUER, VERCEL_JWKS],
+    [VERCEL_GLOBAL_ISSUER, VERCEL_GLOBAL_JWKS],
+  ] as const) {
+    try {
+      const { payload } = await jose.jwtVerify(token, jwks, {
+        issuer,
+        audience: VERCEL_AUDIENCE,
+      });
+      const environment = String(payload.environment || '');
+      const expectedSubject = `owner:${VERCEL_TEAM_SLUG}:project:${VERCEL_PROJECT}:environment:${environment}`;
+      return (environment === 'preview' || environment === 'production')
+        && payload.sub === expectedSubject
+        && payload.owner === VERCEL_TEAM_SLUG
+        && payload.owner_id === VERCEL_TEAM_ID
+        && payload.project === VERCEL_PROJECT
+        && payload.project_id === VERCEL_PROJECT_ID;
+    } catch {
+      // Try the other Vercel issuer mode before rejecting the request.
+    }
   }
+  return false;
 }
 
 function validCreate(record: Record<string, unknown>) {
