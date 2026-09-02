@@ -3,7 +3,6 @@
 const {
   createCipheriv,
   createHash,
-  createHmac,
   randomBytes,
 } = require('node:crypto');
 
@@ -36,17 +35,12 @@ function submissionId(data) {
 
 function ingestRequest(payload) {
   const body = JSON.stringify(payload);
-  const timestamp = String(Date.now());
-  const secret = requiredEnv('QUESTIONNAIRE_INGEST_SECRET');
-  const signature = createHmac('sha256', secret)
-    .update(`${timestamp}.${body}`, 'utf8')
-    .digest('hex');
+  const token = requiredEnv('QUESTIONNAIRE_INGEST_TOKEN');
   return {
     body,
     headers: {
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
-      'X-Parmux-Timestamp': timestamp,
-      'X-Parmux-Signature': `sha256=${signature}`,
     },
     url: requiredEnv('SUPABASE_QUESTIONNAIRE_INGEST_URL'),
   };
