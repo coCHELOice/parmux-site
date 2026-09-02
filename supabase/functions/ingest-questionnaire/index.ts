@@ -3,7 +3,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const TABLE = 'parmux_questionnaire_submissions';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const MAX_BODY_BYTES = 96 * 1024;
-const INGEST_TOKEN_SHA256 = '818ba3b920a3d0ea12a9fed40f871858b908dd44609337d705a1e2a71fc91e6f';
+const INGEST_TOKEN_SHA256 = '601614b8b52d6bdc2153d70624e57f106006fa6adad03a93866403a59c0caaaa';
 
 function json(status: number, body: Record<string, unknown>) {
   return new Response(JSON.stringify(body), {
