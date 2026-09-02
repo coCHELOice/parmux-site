@@ -4,7 +4,7 @@
 
 1. El navegador conserva el borrador localmente y crea un UUID de envío.
 2. Vercel valida sesión, origen, CSRF, campos y consentimiento.
-3. Vercel autentica la solicitud con un token de 256 bits y una Edge Function inserta idempotentemente el envío en Supabase.
+3. Vercel autentica la solicitud con un token OIDC efímero y una Edge Function inserta idempotentemente el envío en Supabase.
 4. El servidor replica un sobre AES-256-GCM a Hetzner cuando la réplica está configurada.
 5. El servidor envía el resumen a `negocios@parmux.com`.
 6. Los estados de réplica y correo se actualizan en Supabase.
@@ -26,7 +26,7 @@ Las tres variables de Hetzner pueden omitirse durante una contingencia; el enví
 ## Controles
 
 - Tabla con RLS forzado y permisos revocados a `anon` y `authenticated`.
-- Escritura exclusiva mediante una Edge Function con token de 256 bits, comparación constante y cuerpo limitado.
+- Escritura exclusiva mediante una Edge Function que valida el OIDC de Vercel (firma, emisor, audiencia, equipo, proyecto y entorno) y limita el cuerpo.
 - La función Vercel no posee credenciales amplias de lectura de Supabase.
 - UUID e inserción `on_conflict` para reintentos sin duplicación.
 - HTTPS obligatorio para la réplica.
