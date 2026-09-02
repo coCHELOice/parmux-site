@@ -13,8 +13,8 @@ Supabase es la fuente de verdad. El correo es una notificación y Hetzner una co
 
 ## Variables protegidas en Vercel
 
-- `SUPABASE_QUESTIONNAIRE_INGEST_URL`
-- `QUESTIONNAIRE_INGEST_TOKEN`: token aleatorio de 256 bits. Supabase conserva sólo su huella SHA-256 en el código de la función.
+- La URL pública de la Edge Function de Supabase está fijada en el backend y puede sobrescribirse opcionalmente con `SUPABASE_QUESTIONNAIRE_INGEST_URL`.
+- Supabase valida el `VERCEL_OIDC_TOKEN` efímero que Vercel incorpora automáticamente. Se verifican firma, emisor, audiencia, equipo, proyecto y entorno; no existe un secreto persistente de ingesta en Vercel.
 - `HETZNER_QUESTIONNAIRE_BACKUP_URL`
 - `HETZNER_QUESTIONNAIRE_BACKUP_TOKEN`
 - `HETZNER_BACKUP_ENCRYPTION_KEY`: 32 bytes aleatorios codificados en Base64.
