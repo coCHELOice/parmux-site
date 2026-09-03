@@ -4,13 +4,13 @@ const {
   replicateToHetzner,
   updateDeliveryState,
 } = require('./lib/questionnaire-storage');
+const { deliverNotification } = require('./lib/questionnaire-notification');
 
 const ACCESS_TOKEN_HASH = '4b3ba060403a4b21b68a89e0b3f638e1d918859f8a51e68ee990b3d71805b6db';
 const ACCESS_EXPIRES_AT = Date.parse('2026-10-16T02:59:59.000Z');
 const SESSION_COOKIE = '__Host-parmux_triagevet_discovery';
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 const MAX_BODY_BYTES = 64 * 1024;
-const FORM_ENDPOINT = 'https://formsubmit.co/ajax/negocios@parmux.com';
 
 function hash(value) {
   return createHash('sha256').update(value, 'utf8').digest('hex');
@@ -132,90 +132,6 @@ function validate(data) {
   if (data.consent !== 'Confirmado') throw new Error('consent');
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(data.submission_id || '')) throw new Error('submission_id');
   return 'ok';
-}
-
-function serialize(value) {
-  if (Array.isArray(value)) return value.length ? value.join(', ') : 'No indicado';
-  if (value && typeof value === 'object') return JSON.stringify(value, null, 2);
-  return value || 'No indicado';
-}
-
-function operationalSummary(data) {
-  const rows = [
-    ['Clínica', data.clinic_name],
-    ['Canales actuales', data.channels],
-    ['Canal principal', data.main_channel],
-    ['Fricción entre canales', data.channel_friction],
-    ['Detalle de fricción', data.channel_friction_detail],
-    ['Uso clínico de WhatsApp', data.whatsapp_clinical],
-    ['Cantidad de WhatsApp', data.whatsapp_count],
-    ['Arquitectura de WhatsApp', data.whatsapp_numbers],
-    ['Otros WhatsApp / usos', data.wa_more_notes],
-    ['Mezcla clínica / no clínica', data.whatsapp_mixed],
-    ['Cómo separan hoy', data.whatsapp_mixed_process],
-    ['Interés en WhatsApp si no usan', data.whatsapp_interest],
-    ['Razón de no uso', data.whatsapp_reason],
-    ['Tipos de consulta clínica', data.query_types],
-    ['Información inicial requerida', data.required_info],
-    ['Frecuencia de consultas potencialmente urgentes', data.urgent_frequency],
-    ['Proceso actual de urgencias', data.urgent_process],
-    ['Situaciones que nunca deberían automatizarse', data.automation_never],
-    ['Primer receptor', data.initial_responder],
-    ['Tamaño del equipo digital', data.digital_team_size],
-    ['Escalamiento al veterinario', data.vet_escalation],
-    ['Momentos difíciles', data.difficult_moments],
-    ['Detalle de momentos difíciles', data.difficult_moments_detail],
-    ['Usos de AgendaPro', data.agendapro_uses],
-    ['Copia manual hacia AgendaPro', data.manual_copy],
-    ['Información que copian', data.manual_copy_detail],
-    ['Otros sistemas', data.other_systems],
-    ['Objetivos del sitio', data.web_goals],
-    ['Preguntas repetidas que podría resolver la web', data.web_repeated_questions],
-    ['Interés en mejoras web', data.web_improvement_interest],
-    ['Instagram', {
-      frecuencia: data.instagram_frequency,
-      responsable: data.instagram_responder,
-      consultas: data.instagram_questions,
-      interes: data.instagram_interest,
-    }],
-    ['Facebook / Messenger', {
-      relevancia: data.facebook_relevance,
-      interes: data.facebook_interest,
-    }],
-    ['Prioridades', data.priorities],
-    ['Mayor impacto a 30 días', data.top_impact],
-    ['Contexto adicional', data.missing_context],
-    ['Contacto', `${data.contact_name}${data.contact_role ? ` · ${data.contact_role}` : ''}`],
-    ['Email', data.contact_email],
-  ];
-  return rows.map(([label, value]) => `${label}: ${serialize(value)}`).join('\n\n');
-}
-
-async function deliver(data) {
-  const payload = {
-    _subject: 'Diagnóstico TriageVet — Pet House',
-    _replyto: data.contact_email,
-    _captcha: 'false',
-    _template: 'table',
-    tipo_solicitud: 'Diagnóstico de operación clínica digital — TriageVet',
-    origen: 'parmux.com/triagevet/diagnostico',
-    clinica: 'Pet House',
-    contacto: `${data.contact_name}${data.contact_role ? ` · ${data.contact_role}` : ''}`,
-    email: data.contact_email,
-    prioridades: (data.priorities || []).join(', '),
-    mayor_impacto_30_dias: data.top_impact,
-    resumen_operacional: operationalSummary(data),
-  };
-
-  const response = await fetch(FORM_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(10000),
-  });
-  const result = await response.json().catch(() => ({}));
-  const delivered = result.success === true || result.success === 'true';
-  if (!response.ok || !delivered) throw new Error('delivery_failed');
 }
 
 function choices(name, values, multiple = false) {
@@ -440,7 +356,8 @@ module.exports = async function handler(req, res) {
 
     let emailStatus = 'delivered';
     try {
-      await deliver(data);
+      const delivery = await deliverNotification(data);
+      console.info(`[TRIAGEVET_EMAIL_DELIVERED] id=${stored.id} provider=${delivery.provider}`);
     } catch (error) {
       emailStatus = 'failed';
       console.warn(`[TRIAGEVET_EMAIL_ERROR] id=${stored.id} ${String(error.message || error).slice(0, 160)}`);

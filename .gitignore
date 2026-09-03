@@ -6,3 +6,7 @@ test-ebhook.html
 proposals/elegant-directions/
 
 .vercel
+
+.env*
+
+dist

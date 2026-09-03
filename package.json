@@ -3,6 +3,10 @@
   "engines": {
     "node": "24.x"
   },
+  "scripts": {
+    "build": "node tools/build-static.cjs",
+    "test": "node --test"
+  },
   "dependencies": {
     "@vercel/oidc": "3.8.5"
   }
