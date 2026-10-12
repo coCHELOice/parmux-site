@@ -2,6 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import * as jose from 'npm:jose@6.2.10';
 
 const TABLE = 'parmux_questionnaire_submissions';
+const CLIENT_ID_RE = /^[a-z0-9][a-z0-9-]{1,63}$/;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const MAX_BODY_BYTES = 96 * 1024;
 const VERCEL_TEAM_SLUG = 'avenidalibertarias-projects';
@@ -57,12 +58,18 @@ async function authorized(req: Request) {
 }
 
 function validCreate(record: Record<string, unknown>) {
+  const payload = record.payload as Record<string, unknown> | null;
   return UUID_RE.test(String(record.id || ''))
-    && record.client_id === 'pet-house'
-    && record.clinic_name === 'Pet House'
-    && typeof record.payload === 'object'
+    && typeof record.client_id === 'string' && CLIENT_ID_RE.test(record.client_id)
+    && typeof record.clinic_name === 'string'
+    && record.clinic_name === record.clinic_name.trim()
+    && record.clinic_name.length >= 1 && record.clinic_name.length <= 160
+    && payload !== null && typeof payload === 'object' && !Array.isArray(payload)
+    && payload.client_id === record.client_id && payload.clinic_name === record.clinic_name
     && /^[a-f0-9]{64}$/.test(String(record.payload_sha256 || ''))
-    && typeof record.contact_email === 'string';
+    && typeof record.contact_email === 'string'
+    && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/u.test(record.contact_email)
+    && String(payload.contact_email || '').toLowerCase() === record.contact_email;
 }
 
 Deno.serve(async (req) => {
@@ -79,6 +86,7 @@ Deno.serve(async (req) => {
   let input: Record<string, unknown>;
   try {
     input = JSON.parse(rawBody);
+    if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error('body');
   } catch {
     return json(400, { ok: false, error: 'invalid_json' });
   }
@@ -96,28 +104,46 @@ Deno.serve(async (req) => {
   if (input.action === 'create') {
     const record = input.record as Record<string, unknown>;
     if (!record || !validCreate(record)) return json(400, { ok: false, error: 'invalid_record' });
-    const { error } = await supabase.from(TABLE).upsert(record, {
+    const { data: inserted, error } = await supabase.from(TABLE).upsert(record, {
       onConflict: 'id',
       ignoreDuplicates: true,
-    });
+    }).select('id').maybeSingle();
     if (error) {
       console.error(`[QUESTIONNAIRE_INGEST_CREATE] ${error.code}`);
       return json(503, { ok: false, error: 'storage_unavailable' });
     }
-    return json(200, { ok: true, id: record.id });
+    // A browser-supplied UUID must never claim a row belonging to another clinic
+    // or a different payload. The upsert above keeps any existing row unchanged.
+    const { data: existing, error: lookupError } = await supabase.from(TABLE)
+      .select('client_id,payload_sha256,email_status,hetzner_backup_status').eq('id', record.id).maybeSingle();
+    if (lookupError || !existing) return json(503, { ok: false, error: 'storage_unavailable' });
+    if (existing.client_id !== record.client_id || existing.payload_sha256 !== record.payload_sha256) {
+      return json(409, { ok: false, error: 'submission_conflict' });
+    }
+    return json(200, {
+      ok: true, id: record.id, already_stored: !inserted,
+      email_status: existing.email_status, hetzner_backup_status: existing.hetzner_backup_status,
+    });
   }
 
   if (input.action === 'update_delivery') {
     const id = String(input.id || '');
+    // Old Pet House deployments omit this field. Restrict that compatibility
+    // path to Pet House rather than permitting updates across clinics.
+    const clientId = input.client_id === undefined ? 'pet-house' : String(input.client_id);
     const candidate = (input.patch || {}) as Record<string, unknown>;
-    if (!UUID_RE.test(id)) return json(400, { ok: false, error: 'invalid_id' });
+    if (!UUID_RE.test(id) || !CLIENT_ID_RE.test(clientId)) {
+      return json(400, { ok: false, error: 'invalid_id' });
+    }
     const allowed = ['email_status', 'hetzner_backup_status', 'status', 'updated_at'];
     const patch = Object.fromEntries(Object.entries(candidate).filter(([key]) => allowed.includes(key)));
-    const { error } = await supabase.from(TABLE).update(patch).eq('id', id);
+    const { data, error } = await supabase.from(TABLE).update(patch)
+      .eq('id', id).eq('client_id', clientId).select('id').maybeSingle();
     if (error) {
       console.error(`[QUESTIONNAIRE_INGEST_UPDATE] ${error.code}`);
       return json(503, { ok: false, error: 'storage_unavailable' });
     }
+    if (!data) return json(409, { ok: false, error: 'submission_conflict' });
     return json(200, { ok: true, id });
   }
 

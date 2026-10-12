@@ -7,6 +7,7 @@ const {
 } = require('node:crypto');
 
 const TABLE = 'parmux_questionnaire_submissions';
+const CLIENT_ID_RE = /^[a-z0-9][a-z0-9-]{1,63}$/;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const DEFAULT_INGEST_URL = 'https://rqdmvbtoxxndhuuyrwnh.supabase.co/functions/v1/ingest-questionnaire';
 
@@ -83,25 +84,35 @@ async function persistPrimary(data, fetchImpl = globalThis.fetch) {
   });
 
   if (!response.ok) {
+    if (response.status === 409) {
+      const conflict = new Error('submission_conflict');
+      conflict.code = 'submission_conflict';
+      throw conflict;
+    }
     const detail = await response.text().catch(() => '');
     throw new Error(`supabase_insert_failed_${response.status}_${detail.slice(0, 120)}`);
   }
+  const receipt = typeof response.json === 'function' ? await response.json().catch(() => ({})) : {};
 
   return {
     id,
     capturedAt,
     payloadSha256: record.payload_sha256,
     record,
+    alreadyStored: receipt.already_stored === true,
+    emailStatus: receipt.email_status,
+    backupStatus: receipt.hetzner_backup_status,
   };
 }
 
-async function updateDeliveryState(id, fields, fetchImpl = globalThis.fetch) {
+async function updateDeliveryState(id, clientId, fields, fetchImpl = globalThis.fetch) {
   if (!UUID_RE.test(String(id))) throw new Error('invalid_submission_id');
+  if (!CLIENT_ID_RE.test(clientId)) throw new Error('invalid_client_id');
   const allowed = ['email_status', 'hetzner_backup_status', 'status'];
   const patch = Object.fromEntries(Object.entries(fields).filter(([key]) => allowed.includes(key)));
   patch.updated_at = new Date().toISOString();
 
-  const request = await ingestRequest({ action: 'update_delivery', id, patch });
+  const request = await ingestRequest({ action: 'update_delivery', id, client_id: clientId, patch });
   const response = await fetchImpl(request.url, {
     method: 'POST',
     headers: request.headers,

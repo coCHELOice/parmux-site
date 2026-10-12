@@ -2,49 +2,15 @@ const {
   createCipheriv,
   createHash,
   randomBytes,
-  timingSafeEqual,
 } = require('node:crypto');
 
-const ACCESS_TOKEN_HASH = '4b3ba060403a4b21b68a89e0b3f638e1d918859f8a51e68ee990b3d71805b6db';
-const ACCESS_EXPIRES_AT = Date.parse('2026-10-16T02:59:59.000Z');
-const SESSION_COOKIE = '__Host-parmux_triagevet_discovery';
+const { authorizedSubmission, requestToken, resolveClinic } = require('./lib/triagevet-access');
 const MAX_BACKUP_BYTES = 64 * 1024;
 const FORM_EMAIL_ENDPOINT = 'https://formsubmit.co/ajax/negocios@parmux.com';
 const FORM_TOKEN_ENDPOINT = 'https://formsubmit.co/ajax/cc6e1ab5ad4e5885441e159ec477ec97';
 const FORM_PAGE_URL = 'https://parmux.com/triagevet/diagnostico';
 const BACKUP_CONTEXT = 'parmux-triagevet-discovery-backup-v1';
 const nativeFetch = globalThis.fetch.bind(globalThis);
-
-function hash(value) {
-  return createHash('sha256').update(value, 'utf8').digest('hex');
-}
-
-function safeEqualHex(left, right) {
-  if (!/^[a-f0-9]{64}$/i.test(left) || !/^[a-f0-9]{64}$/i.test(right)) return false;
-  return timingSafeEqual(Buffer.from(left, 'hex'), Buffer.from(right, 'hex'));
-}
-
-function validToken(token) {
-  return typeof token === 'string'
-    && token.length === 64
-    && Date.now() <= ACCESS_EXPIRES_AT
-    && safeEqualHex(hash(token), ACCESS_TOKEN_HASH);
-}
-
-function parseCookies(header = '') {
-  return String(header).split(';').reduce((cookies, pair) => {
-    const separator = pair.indexOf('=');
-    if (separator < 1) return cookies;
-    const key = pair.slice(0, separator).trim();
-    const value = pair.slice(separator + 1).trim();
-    try {
-      cookies[key] = decodeURIComponent(value);
-    } catch {
-      cookies[key] = '';
-    }
-    return cookies;
-  }, {});
-}
 
 function requestBody(req) {
   if (req.body && typeof req.body === 'object' && !Array.isArray(req.body)) {
@@ -62,16 +28,18 @@ function requestBody(req) {
 }
 
 function isSubmission(req, body) {
+  const clinic = resolveClinic(requestToken(req));
   return String(req.method || '').toUpperCase() === 'POST'
     && body
-    && body.client_id === 'pet-house'
-    && body.clinic_name === 'Pet House'
+    && clinic && authorizedSubmission(req)
+    && body.client_id === clinic.client_id
+    && body.clinic_name === clinic.clinic_name
     && !(typeof body._honey === 'string' && body._honey.trim());
 }
 
 function encryptBackup(req, body) {
-  const token = parseCookies(req.headers.cookie || '')[SESSION_COOKIE] || '';
-  if (!validToken(token)) throw new Error('backup_session_unavailable');
+  const token = requestToken(req);
+  if (!resolveClinic(token)) throw new Error('backup_session_unavailable');
 
   const record = JSON.stringify({
     version: 1,

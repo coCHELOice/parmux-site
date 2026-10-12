@@ -32,7 +32,12 @@ before(async () => {
 
 after(async () => {
   child?.kill('SIGTERM');
-  await rm(directory, { recursive: true, force: true });
+  if (directory) {
+    const target = path.resolve(directory);
+    assert.equal(path.dirname(target), path.resolve(os.tmpdir()));
+    assert.match(path.basename(target), /^parmux-backup-/);
+    await rm(target, { recursive: true, force: true });
+  }
 });
 
 test('receiver rejects unauthenticated writes and stores an idempotent encrypted envelope', async () => {
