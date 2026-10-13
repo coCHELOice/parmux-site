@@ -121,3 +121,16 @@ test('deliverViaFormSubmit remains as a temporary fallback', async () => {
   assert.equal(body.email, 'negocios@parmux.com');
   assert.equal(result.provider, 'formsubmit');
 });
+
+test('FormSubmit fallback carries the resolved clinic without changing the recipient', async () => {
+  let body;
+  const data = { ...sample, client_id: 'clinica-demo', clinic_name: 'Clínica Demo' };
+  await deliverViaFormSubmit(data, async (url, init) => {
+    assert.equal(url, 'https://formsubmit.co/ajax/negocios@parmux.com');
+    body = JSON.parse(init.body);
+    return { ok: true, status: 200, json: async () => ({ success: true }) };
+  });
+  assert.equal(body.clinica, 'Clínica Demo');
+  assert.equal(body._subject, 'Diagnóstico TriageVet - Clínica Demo');
+  assert.equal(body._replyto, sample.contact_email);
+});

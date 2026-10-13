@@ -88,7 +88,7 @@ function operationalSummary(data) {
 function notificationContent(data) {
   const summary = operationalSummary(data);
   const contact = `${data.contact_name}${data.contact_role ? ` · ${data.contact_role}` : ''}`;
-  const subject = `Diagnóstico TriageVet - ${data.clinic_name || 'Pet House'}`;
+  const subject = `Diagnóstico TriageVet - ${data.clinic_name || 'Clínica veterinaria'}`;
   const text = [
     subject,
     '',
@@ -160,15 +160,15 @@ async function deliverViaResend(data, fetchImpl = globalThis.fetch) {
 }
 
 async function deliverViaFormSubmit(data, fetchImpl = globalThis.fetch) {
-  const { text } = notificationContent(data);
+  const { subject, text } = notificationContent(data);
   const payload = {
-    _subject: 'Diagnóstico TriageVet — Pet House',
+    _subject: subject,
     _replyto: data.contact_email,
     _captcha: 'false',
     _template: 'table',
     tipo_solicitud: 'Diagnóstico de operación clínica digital — TriageVet',
     origen: 'parmux.com/triagevet/diagnostico',
-    clinica: 'Pet House',
+    clinica: data.clinic_name,
     contacto: `${data.contact_name}${data.contact_role ? ` · ${data.contact_role}` : ''}`,
     email: data.contact_email,
     prioridades: (data.priorities || []).join(', '),

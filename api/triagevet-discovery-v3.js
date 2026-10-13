@@ -1,66 +1,13 @@
-const { createHash, timingSafeEqual } = require('node:crypto');
+const {
+  authorizedSubmission, csrfFor, escapeHtml, requestToken, resolveClinic, sessionCookie,
+} = require('./lib/triagevet-access');
 const {
   persistPrimary,
   replicateToHetzner,
   updateDeliveryState,
 } = require('./lib/questionnaire-storage');
 const { deliverNotification } = require('./lib/questionnaire-notification');
-
-const ACCESS_TOKEN_HASH = '4b3ba060403a4b21b68a89e0b3f638e1d918859f8a51e68ee990b3d71805b6db';
-const ACCESS_EXPIRES_AT = Date.parse('2026-10-16T02:59:59.000Z');
-const SESSION_COOKIE = '__Host-parmux_triagevet_discovery';
-const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 const MAX_BODY_BYTES = 64 * 1024;
-
-function hash(value) {
-  return createHash('sha256').update(value, 'utf8').digest('hex');
-}
-
-function safeEqualHex(left, right) {
-  if (!/^[a-f0-9]{64}$/i.test(left) || !/^[a-f0-9]{64}$/i.test(right)) return false;
-  return timingSafeEqual(Buffer.from(left, 'hex'), Buffer.from(right, 'hex'));
-}
-
-function validToken(token) {
-  return typeof token === 'string'
-    && token.length === 64
-    && Date.now() <= ACCESS_EXPIRES_AT
-    && safeEqualHex(hash(token), ACCESS_TOKEN_HASH);
-}
-
-function parseCookies(header = '') {
-  return header.split(';').reduce((output, part) => {
-    const index = part.indexOf('=');
-    if (index < 1) return output;
-    const key = part.slice(0, index).trim();
-    try {
-      output[key] = decodeURIComponent(part.slice(index + 1).trim());
-    } catch {
-      output[key] = '';
-    }
-    return output;
-  }, {});
-}
-
-function requestToken(req) {
-  return parseCookies(req.headers.cookie)[SESSION_COOKIE] || '';
-}
-
-function csrfFor(token) {
-  return createHash('sha256').update(`${token}|triagevet-discovery-v3`, 'utf8').digest('base64url');
-}
-
-function sameOrigin(req) {
-  const origin = req.headers.origin;
-  const host = req.headers['x-forwarded-host'] || req.headers.host;
-  if (typeof origin !== 'string' || typeof host !== 'string') return false;
-  try {
-    const parsed = new URL(origin);
-    return parsed.protocol === 'https:' && parsed.host === host;
-  } catch {
-    return false;
-  }
-}
 
 function setSecurityHeaders(res, contentType) {
   res.setHeader('Content-Type', contentType);
@@ -119,9 +66,12 @@ function readBody(req) {
   return clean(raw);
 }
 
-function validate(data) {
+function validate(data, clinic) {
   if (data._honey) return 'honeypot';
-  if (data.client_id !== 'pet-house' || data.clinic_name !== 'Pet House') throw new Error('client');
+  if (data.client_id !== clinic.client_id || data.clinic_name !== clinic.clinic_name) throw new Error('client');
+  // Only the server-resolved identity reaches storage, backup and notification.
+  data.client_id = clinic.client_id;
+  data.clinic_name = clinic.clinic_name;
   if (!Array.isArray(data.channels) || !data.channels.length || !data.main_channel) throw new Error('channels');
   if (!data.whatsapp_clinical) throw new Error('whatsapp');
   if (data.whatsapp_clinical !== 'No actualmente' && !data.whatsapp_count) throw new Error('whatsapp_count');
@@ -150,7 +100,9 @@ function stepHeader(number, title, subtitle) {
   return `<header class="step-head"><p>Paso ${number} de 7</p><h2>${title}</h2><span>${subtitle}</span></header>`;
 }
 
-function questionnaire(csrf) {
+function questionnaire(csrf, clinic) {
+  const clinicName = escapeHtml(clinic.clinic_name);
+  const clientId = escapeHtml(clinic.client_id);
   const channels = ['WhatsApp', 'Teléfono', 'AgendaPro', 'Sitio web / formulario', 'Instagram', 'Facebook / Messenger', 'Email', 'Google', 'Presencial', 'Otro'];
   const queryTypes = ['Solicitud de hora', 'Síntomas o problema de salud', 'Consulta potencialmente urgente', 'Controles', 'Resultados de exámenes', 'Paciente hospitalizado', 'Medicamentos o tratamientos', 'Precios', 'Horarios', 'Especialidades', 'Disponibilidad profesional', 'Fotos o videos', 'Exámenes o documentos', 'Seguimiento posterior', 'Otro'];
   const requiredInfo = ['Especie', 'Edad', 'Motivo', 'Síntomas', 'Tiempo de evolución', 'Estado general', 'Antecedentes', 'Medicamentos', 'Fotos o videos', 'Exámenes previos', 'Identificación del paciente', 'Otro'];
@@ -166,7 +118,7 @@ function questionnaire(csrf) {
   <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
   <meta name="referrer" content="no-referrer">
   <meta name="triagevet-csrf" content="${csrf}">
-  <title>Diagnóstico clínico digital · Pet House × TriageVet</title>
+  <title>Diagnóstico clínico digital · ${clinicName} × TriageVet</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700&display=swap" rel="stylesheet">
@@ -176,11 +128,11 @@ function questionnaire(csrf) {
 <main class="shell">
   <header class="top">
     <a class="brand" href="/"><span class="mark">P</span><span><strong>PARMUX</strong><small>TriageVet</small></span></a>
-    <span class="badge">Diagnóstico privado · Pet House</span>
+    <span class="badge">Diagnóstico privado · ${clinicName}</span>
   </header>
 
   <section class="intro" id="intro">
-    <p class="eyebrow">Pet House × TriageVet</p>
+    <p class="eyebrow">${clinicName} × TriageVet</p>
     <h1>Antes de mostrar una solución, queremos entender cómo funciona su clínica.</h1>
     <p class="lead">Cada clínica organiza de manera distinta sus consultas, agenda, WhatsApp y equipo. Este diagnóstico permite preparar una demostración centrada sólo en aquello que pueda aportar valor.</p>
     <div class="facts"><span>5–8 minutos</span><span>Respuestas aproximadas están bien</span><span>Sin datos de pacientes</span></div>
@@ -197,8 +149,8 @@ function questionnaire(csrf) {
     </aside>
 
     <form class="card" id="discovery-form" novalidate>
-      <input type="hidden" name="clinic_name" value="Pet House">
-      <input type="hidden" name="client_id" value="pet-house">
+      <input type="hidden" name="clinic_name" value="${clinicName}">
+      <input type="hidden" name="client_id" value="${clientId}">
       <label class="honey" aria-hidden="true">No completar<input name="_honey" tabindex="-1" autocomplete="off"></label>
 
       <section class="panel" data-step>
@@ -213,7 +165,7 @@ function questionnaire(csrf) {
         ${stepHeader(2, 'Arquitectura real de WhatsApp', 'Necesitamos saber cuántos canales existen y qué función cumple cada uno.')}
         <fieldset><legend>¿Utilizan actualmente WhatsApp para consultas veterinarias?</legend>${choices('whatsapp_clinical', ['Sí, regularmente', 'Sí, de forma limitada', 'Sólo determinadas consultas', 'No actualmente'])}</fieldset>
         <div id="wa-yes" hidden>
-          <fieldset><legend>¿Cuántos números de WhatsApp utiliza actualmente Pet House?</legend>${choices('whatsapp_count', ['1', '2', '3', '4 o más'])}</fieldset>
+          <fieldset><legend>¿Cuántos números de WhatsApp utiliza actualmente ${clinicName}?</legend>${choices('whatsapp_count', ['1', '2', '3', '4 o más'])}</fieldset>
           <div id="wa-cards"></div>
           <div id="wa-more" hidden>${field('wa_more_notes', 'Si utilizan más de cuatro, indíquenos brevemente los números o usos adicionales', { area: true })}</div>
           <fieldset><legend>¿Alguno mezcla consultas clínicas con hotel, peluquería u otros servicios?</legend>${choices('whatsapp_mixed', ['Sí', 'No', 'No estamos seguros'])}</fieldset>
@@ -269,7 +221,7 @@ function questionnaire(csrf) {
       <section class="panel" data-step hidden>
         ${stepHeader(6, '¿Dónde tendría más impacto intervenir?', 'Seleccionen hasta tres prioridades. La propuesta se construirá alrededor de ellas.')}
         <fieldset><legend>Prioridades principales · máximo 3</legend>${choices('priorities', priorities, true)}</fieldset>
-        <div class="emphasis">${field('top_impact', 'Si pudiéramos mejorar una sola parte durante los próximos 30 días, ¿cuál tendría mayor impacto para Pet House?', { area: true })}</div>
+        <div class="emphasis">${field('top_impact', `Si pudiéramos mejorar una sola parte durante los próximos 30 días, ¿cuál tendría mayor impacto para ${clinicName}?`, { area: true })}</div>
         ${field('missing_context', '¿Hay algo particular de la operación que debamos entender antes de preparar la demo?', { area: true, placeholder: 'Opcional' })}
       </section>
 
@@ -279,16 +231,19 @@ function questionnaire(csrf) {
           ${field('contact_name', 'Nombre', { placeholder: 'Ej.: Constanza Silva' })}
           ${field('contact_role', 'Cargo o función', { placeholder: 'Opcional' })}
         </div>
+        <label class="field"><span>Clínica destinataria</span><input value="${clinicName}" readonly aria-readonly="true"></label>
         ${field('contact_email', 'Email', { type: 'email' })}
         <label class="consent"><input type="checkbox" name="consent" value="Confirmado"><span>Confirmo que las respuestas describen de forma aproximada la operación y no incluyen datos personales ni clínicos identificables de pacientes.</span></label>
         <div class="note"><strong>Qué sucede después</strong><span>PARMUX preparará una demostración de TriageVet enfocada en la operación clínica real. Sitio, Instagram, Facebook o integraciones sólo se propondrán si las respuestas muestran que aportan valor.</span></div>
       </section>
 
       <p class="error" id="error" role="alert" aria-live="polite"></p>
+      <p class="note" id="submission-conflict" role="status" hidden>No pudimos confirmar el envío con estas respuestas. Tus cambios se conservan. Si continúas como una nueva respuesta, se conservará cualquier envío anterior y se enviará una nueva notificación.</p>
       <div class="actions">
         <button class="secondary" id="prev" type="button">← Atrás</button>
         <button class="primary" id="next" type="button">Continuar →</button>
         <button class="primary" id="submit" type="submit" hidden>Enviar diagnóstico →</button>
+        <button class="secondary" id="new-submission" type="button" hidden>Enviar como nueva respuesta</button>
       </div>
       <p class="saved">Las respuestas se guardan temporalmente en este dispositivo.</p>
     </form>
@@ -298,7 +253,7 @@ function questionnaire(csrf) {
     <div class="check">✓</div>
     <p class="eyebrow">Diagnóstico recibido</p>
     <h1>Ya tenemos una imagen mucho más clara.</h1>
-    <p>Revisaremos el recorrido clínico, WhatsApp, AgendaPro y los canales digitales relevantes para preparar una demostración centrada en la operación real de Pet House.</p>
+    <p>Revisaremos el recorrido clínico, WhatsApp, AgendaPro y los canales digitales relevantes para preparar una demostración centrada en la operación real de ${clinicName}.</p>
     <p><strong>TriageVet · PARMUX</strong><br>Tecnología que devuelve tiempo.</p>
   </section>
 </main>
@@ -310,29 +265,29 @@ function questionnaire(csrf) {
 module.exports = async function handler(req, res) {
   const method = String(req.method || 'GET').toUpperCase();
   const session = requestToken(req);
+  const clinic = resolveClinic(session);
 
   if (method === 'GET') {
     const access = typeof req.query?.access === 'string' ? req.query.access.trim() : '';
     if (access) {
-      if (!validToken(access)) return html(res, 404, '<!doctype html><meta charset="utf-8"><title>No disponible</title>');
-      const cookie = `${SESSION_COOKIE}=${encodeURIComponent(access)}; Path=/; Max-Age=${SESSION_MAX_AGE}; HttpOnly; Secure; SameSite=Strict`;
+      const target = resolveClinic(access);
+      if (!target) return html(res, 404, '<!doctype html><meta charset="utf-8"><title>No disponible</title>');
+      const cookie = sessionCookie(access, target);
       return html(res, 302, '', { 'Set-Cookie': cookie, Location: '/triagevet/diagnostico' });
     }
-    if (!validToken(session)) return html(res, 404, '<!doctype html><meta charset="utf-8"><title>No disponible</title>');
-    return html(res, 200, questionnaire(csrfFor(session)));
+    if (!clinic) return html(res, 404, '<!doctype html><meta charset="utf-8"><title>No disponible</title>');
+    return html(res, 200, questionnaire(csrfFor(session), clinic));
   }
 
   if (method === 'POST') {
-    if (!validToken(session) || !sameOrigin(req)) return json(res, 403, { ok: false, error: 'invalid_request' });
-    const supplied = req.headers['x-triagevet-csrf'];
-    if (typeof supplied !== 'string' || !safeEqualHex(hash(supplied), hash(csrfFor(session)))) {
+    if (!clinic || !authorizedSubmission(req, session)) {
       return json(res, 403, { ok: false, error: 'invalid_request' });
     }
 
     let data;
     try {
       data = readBody(req);
-      const status = validate(data);
+      const status = validate(data, clinic);
       if (status === 'honeypot') return json(res, 200, { ok: true });
     } catch {
       return json(res, 400, { ok: false, error: 'invalid_form' });
@@ -342,8 +297,20 @@ module.exports = async function handler(req, res) {
     try {
       stored = await persistPrimary(data);
     } catch (error) {
+      if (error.code === 'submission_conflict') {
+        return json(res, 409, { ok: false, error: 'submission_conflict' });
+      }
       console.error(`[TRIAGEVET_SUPABASE_ERROR] ${String(error.message || error).slice(0, 220)}`);
       return json(res, 503, { ok: false, error: 'storage_unavailable' });
+    }
+
+    // A lost HTTP response must not replay backup or notification side effects.
+    // Pending/failed delivery remains visible for a separate operational recovery.
+    if (stored.alreadyStored) {
+      return json(res, 200, {
+        ok: true, stored: true, repeated: true, submissionId: stored.id,
+        delivered: stored.emailStatus === 'delivered', backedUp: stored.backupStatus === 'stored',
+      });
     }
 
     let backupStatus = 'not_configured';
@@ -364,7 +331,7 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-      await updateDeliveryState(stored.id, {
+      await updateDeliveryState(stored.id, clinic.client_id, {
         email_status: emailStatus,
         hetzner_backup_status: backupStatus,
       });

@@ -1,10 +1,16 @@
 'use strict';
 
 (() => {
-  const STORE = 'parmux:triagevet:pet-house:v3';
-  const SUBMISSION_ID_STORE = `${STORE}:submission-id`;
   const form = document.querySelector('#discovery-form');
   if (!form) return;
+  const clientId = form.elements.namedItem('client_id').value;
+  const clinicName = form.elements.namedItem('clinic_name').value;
+  const STORE = `parmux:triagevet:${clientId}:v3`;
+  const SUBMISSION_ID_STORE = `${STORE}:submission-id`;
+  const CONFLICT_STORE = `${STORE}:submission-conflict`;
+  let memorySubmissionId = '';
+  let submissionConflict = false;
+  let sending = false;
 
   const panels = [...document.querySelectorAll('[data-step]')];
   const nav = [...document.querySelectorAll('[data-nav]')];
@@ -143,20 +149,45 @@
   }
 
   function submissionId() {
+    if (memorySubmissionId) return memorySubmissionId;
     try {
       const stored = localStorage.getItem(SUBMISSION_ID_STORE);
-      if (stored) return stored;
-      const created = newSubmissionId();
-      localStorage.setItem(SUBMISSION_ID_STORE, created);
-      return created;
-    } catch {
-      return newSubmissionId();
+      if (stored) { memorySubmissionId = stored; return stored; }
+    } catch { /* keep one ID in memory when storage is unavailable */ }
+    memorySubmissionId = newSubmissionId();
+    try { localStorage.setItem(SUBMISSION_ID_STORE, memorySubmissionId); } catch { /* storage is optional */ }
+    return memorySubmissionId;
+  }
+
+  function ownsSavedDraft(payload) {
+    try { return localStorage.getItem(STORE) === payload; } catch { return false; }
+  }
+
+  function setConflict(value, persist = true) {
+    submissionConflict = value;
+    if (persist) {
+      try {
+        if (value) {
+          localStorage.setItem(SUBMISSION_ID_STORE, submissionId());
+          localStorage.setItem(CONFLICT_STORE, submissionId());
+        } else localStorage.removeItem(CONFLICT_STORE);
+      } catch { /* keep the recovery choice in memory */ }
     }
+    renderConflict();
+  }
+
+  function renderConflict() {
+    document.querySelector('#submission-conflict').hidden = !submissionConflict;
+    document.querySelector('#new-submission').hidden = !submissionConflict || step !== 6;
+    document.querySelector('#submit').disabled = sending || submissionConflict;
+    form.querySelectorAll('input, textarea, select').forEach((control) => { control.disabled = sending; });
+    document.querySelector('#prev').disabled = sending;
+    document.querySelector('#next').disabled = sending;
   }
 
   function data() {
     const scalar = [
-      'clinic_name', 'client_id', 'main_channel', 'channel_friction', 'channel_friction_detail',
+      'main_channel', 'channel_friction', 'channel_friction_detail',
       'whatsapp_clinical', 'whatsapp_count', 'whatsapp_mixed', 'whatsapp_mixed_process',
       'whatsapp_interest', 'whatsapp_reason', 'wa_more_notes', 'urgent_frequency', 'urgent_process',
       'automation_never', 'initial_responder', 'digital_team_size', 'vet_escalation',
@@ -167,6 +198,8 @@
       'contact_name', 'contact_role', 'contact_email', '_honey',
     ];
     const result = Object.fromEntries(scalar.map((name) => [name, radio(name) || val(name)]));
+    result.client_id = clientId;
+    result.clinic_name = clinicName;
     ['channels', 'query_types', 'required_info', 'agendapro_uses', 'web_goals', 'priorities']
       .forEach((name) => { result[name] = checks(name); });
     result.whatsapp_numbers = readWhatsapp();
@@ -183,10 +216,10 @@
   function restore() {
     let stored;
     try { stored = JSON.parse(localStorage.getItem(STORE) || 'null'); } catch { stored = null; }
-    if (!stored) return false;
+    if (!stored || stored.client_id !== clientId) return false;
 
     Object.entries(stored).forEach(([name, value]) => {
-      if (name === 'whatsapp_numbers' || name === '_step' || name === 'main_channel') return;
+      if (['client_id', 'clinic_name', 'whatsapp_numbers', '_step', 'main_channel'].includes(name)) return;
       if (Array.isArray(value)) {
         all(name).forEach((x) => { x.checked = value.includes(x.value); });
         return;
@@ -246,6 +279,7 @@
     document.querySelector('#prev').hidden = step === 0;
     document.querySelector('#next').hidden = step === 6;
     document.querySelector('#submit').hidden = step !== 6;
+    renderConflict();
     error.textContent = '';
     branches();
     renderWhatsapp();
@@ -286,23 +320,39 @@
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (sending || submissionConflict) { renderConflict(); return; }
     const message = validate();
     if (message) { error.textContent = message; return; }
 
     const button = document.querySelector('#submit');
+    const submittedPayload = JSON.stringify(data());
+    sending = true;
+    renderConflict();
     button.disabled = true;
     button.textContent = 'Enviando…';
     try {
       const response = await fetch('/triagevet/diagnostico', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-TriageVet-CSRF': csrf },
-        body: JSON.stringify(data()),
+        body: submittedPayload,
       });
       const result = await response.json().catch(() => ({}));
+      if (response.status === 409 && result.error === 'submission_conflict') {
+        // Keep this tab's answers in memory. Persist its conflict only if its
+        // submitted snapshot still owns the shared draft, as for a successful reply.
+        setConflict(true, ownsSavedDraft(submittedPayload));
+        button.textContent = 'Enviar diagnóstico →';
+        return;
+      }
       if (!response.ok || result.ok !== true) throw new Error('send_failed');
       try {
-        localStorage.removeItem(STORE);
-        localStorage.removeItem(SUBMISSION_ID_STORE);
+        // Another tab may have edited this clinic's draft while this request ran.
+        // Confirm only this payload; never discard a newer draft or its recovery state.
+        if (ownsSavedDraft(submittedPayload)) {
+          localStorage.removeItem(STORE);
+          if (localStorage.getItem(SUBMISSION_ID_STORE) === memorySubmissionId) localStorage.removeItem(SUBMISSION_ID_STORE);
+          if (localStorage.getItem(CONFLICT_STORE) === memorySubmissionId) localStorage.removeItem(CONFLICT_STORE);
+        }
       } catch { /* storage is optional */ }
       workspace.hidden = true;
       success.hidden = false;
@@ -314,13 +364,33 @@
       error.textContent = 'No pudimos enviar el diagnóstico. Tus respuestas siguen guardadas en este dispositivo; puedes volver a intentarlo.';
       button.disabled = false;
       button.textContent = 'Enviar diagnóstico →';
+    } finally {
+      sending = false;
+      renderConflict();
     }
   });
 
+  document.querySelector('#new-submission').addEventListener('click', () => {
+    if (!submissionConflict || sending) return;
+    const message = validate();
+    if (message) { error.textContent = message; return; }
+    if (!window.confirm('Se conservará cualquier respuesta anterior. ¿Enviar estas respuestas como una nueva respuesta y una nueva notificación?')) return;
+    memorySubmissionId = newSubmissionId();
+    try { localStorage.setItem(SUBMISSION_ID_STORE, memorySubmissionId); } catch { /* keep the new ID in memory */ }
+    setConflict(false);
+    save();
+    form.requestSubmit();
+  });
+
+  try {
+    const conflictId = localStorage.getItem(CONFLICT_STORE);
+    submissionConflict = Boolean(conflictId && conflictId === localStorage.getItem(SUBMISSION_ID_STORE));
+  } catch { /* no persisted conflict */ }
   const restored = restore();
   updateMain(radio('main_channel'));
   branches();
   selectedClasses();
+  renderConflict();
   if (restored) {
     intro.hidden = true;
     workspace.hidden = false;

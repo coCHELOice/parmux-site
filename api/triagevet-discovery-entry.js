@@ -1,26 +1,5 @@
-const { createHash, timingSafeEqual } = require('node:crypto');
+const { escapeHtml, resolveClinic, sessionCookie } = require('./lib/triagevet-access');
 const discoveryHandler = require('./triagevet-discovery-v3');
-
-const ACCESS_TOKEN_HASH = '4b3ba060403a4b21b68a89e0b3f638e1d918859f8a51e68ee990b3d71805b6db';
-const ACCESS_EXPIRES_AT = Date.parse('2026-10-16T02:59:59.000Z');
-const SESSION_COOKIE = '__Host-parmux_triagevet_discovery';
-const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
-
-function hash(value) {
-  return createHash('sha256').update(value, 'utf8').digest('hex');
-}
-
-function safeEqualHex(left, right) {
-  if (!/^[a-f0-9]{64}$/i.test(left) || !/^[a-f0-9]{64}$/i.test(right)) return false;
-  return timingSafeEqual(Buffer.from(left, 'hex'), Buffer.from(right, 'hex'));
-}
-
-function validToken(token) {
-  return typeof token === 'string'
-    && token.length === 64
-    && Date.now() <= ACCESS_EXPIRES_AT
-    && safeEqualHex(hash(token), ACCESS_TOKEN_HASH);
-}
 
 function baseHeaders(res) {
   res.setHeader('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
@@ -77,7 +56,8 @@ function trustFooter() {
   </footer>`;
 }
 
-function welcomePage(res, cookie) {
+function welcomePage(res, cookie, clinic) {
+  const clinicName = escapeHtml(clinic.clinic_name);
   baseHeaders(res);
   res.setHeader('Set-Cookie', cookie);
   return res.status(200).send(`<!doctype html>
@@ -87,7 +67,7 @@ function welcomePage(res, cookie) {
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
   <meta name="referrer" content="no-referrer">
-  <title>Diagnóstico clínico digital · Pet House × TriageVet</title>
+  <title>Diagnóstico clínico digital · ${clinicName} × TriageVet</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700&display=swap" rel="stylesheet">
@@ -98,11 +78,11 @@ function welcomePage(res, cookie) {
   <main class="shell">
     <header class="top">
       <a class="brand" href="/"><span class="mark">P</span><span><strong>PARMUX</strong><small>TriageVet</small></span></a>
-      <span class="badge">Diagnóstico privado · Pet House</span>
+      <span class="badge">Diagnóstico privado · ${clinicName}</span>
     </header>
 
     <section class="intro" id="intro">
-      <p class="eyebrow">Pet House × TriageVet</p>
+      <p class="eyebrow">${clinicName} × TriageVet</p>
       <h1>Antes de mostrar una solución, queremos entender cómo funciona su clínica.</h1>
       <p class="lead">Cada clínica organiza de manera distinta sus consultas, agenda, WhatsApp y equipo. Este diagnóstico permite preparar una demostración centrada sólo en aquello que pueda aportar valor.</p>
       <div class="facts"><span>5–8 minutos</span><span>Respuestas aproximadas están bien</span><span>Sin datos de pacientes</span></div>
@@ -166,12 +146,13 @@ module.exports = async function handler(req, res) {
   const access = typeof req.query?.access === 'string' ? req.query.access.trim() : '';
 
   if (method === 'GET' && access) {
-    if (!validToken(access)) return unavailable(res);
+    const clinic = resolveClinic(access);
+    if (!clinic) return unavailable(res);
 
     // SameSite=Lax allows a private link opened from email, WhatsApp or another
     // external app to establish its secure session without losing the cover page.
-    const cookie = `${SESSION_COOKIE}=${encodeURIComponent(access)}; Path=/; Max-Age=${SESSION_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`;
-    return welcomePage(res, cookie);
+    const cookie = sessionCookie(access, clinic);
+    return welcomePage(res, cookie, clinic);
   }
 
   if (method === 'GET') {

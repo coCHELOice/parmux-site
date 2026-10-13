@@ -9,6 +9,7 @@ const {
   replicateToHetzner,
   stableJson,
   submissionId,
+  updateDeliveryState,
 } = require('../api/lib/questionnaire-storage');
 
 const ORIGINAL_ENV = { ...process.env };
@@ -84,4 +85,33 @@ test('Hetzner replica contains ciphertext, not questionnaire plaintext', async (
   });
   assert.equal(result.status, 'stored');
   assert.ok(!body.includes('contenido sensible'));
+});
+
+test('delivery updates carry clinic identity and reject invalid identities before sending', async () => {
+  const id = 'a42e36c1-b20f-4ee1-9f41-0ae18cc04d58';
+  let body;
+  const fakeFetch = async (_url, init) => {
+    body = JSON.parse(init.body);
+    return { ok: true, status: 200 };
+  };
+  await updateDeliveryState(id, 'clinica-demo', { email_status: 'delivered', client_id: 'other-clinic' }, fakeFetch);
+  assert.equal(body.client_id, 'clinica-demo');
+  assert.equal(body.patch.client_id, undefined);
+  assert.equal(body.patch.email_status, 'delivered');
+  await assert.rejects(updateDeliveryState(id, '../invalid', {}, fakeFetch), /invalid_client_id/);
+});
+
+test('storage preserves a conflict code and recognizes the receipt for an already saved response', async () => {
+  const data = {
+    submission_id: 'a42e36c1-b20f-4ee1-9f41-0ae18cc04d58',
+    client_id: 'clinica-demo', clinic_name: 'Clínica Demo', contact_email: 'test@example.test',
+  };
+  await assert.rejects(persistPrimary(data, async () => ({ ok: false, status: 409 })), { code: 'submission_conflict' });
+  const receipt = await persistPrimary(data, async () => ({
+    ok: true, status: 200,
+    json: async () => ({ already_stored: true, email_status: 'delivered', hetzner_backup_status: 'failed' }),
+  }));
+  assert.equal(receipt.alreadyStored, true);
+  assert.equal(receipt.emailStatus, 'delivered');
+  assert.equal(receipt.backupStatus, 'failed');
 });
