@@ -7,9 +7,10 @@ No hay alta pública, listado de clínicas ni respuestas visibles para otros des
 
 ## Compatibilidad y alcance
 
-El registro entregado contiene únicamente Pet House, con el mismo hash del enlace
-existente y vencimiento `2026-10-16T02:59:59.000Z`. No se generaron enlaces reales ni
-se amplió su vigencia. El formato sigue siendo `/triagevet/diagnostico?access=…`.
+El registro contiene únicamente Pet House, con el mismo hash del enlace existente.
+Su vigencia autorizada se amplió hasta `2026-11-30T02:59:59.000Z`, equivalente al
+29 de noviembre de 2026 a las 23:59:59 en `America/Santiago`. No se generaron
+accesos nuevos. El formato sigue siendo `/triagevet/diagnostico?access=…`.
 La cookie mantiene `HttpOnly`, `Secure` y `SameSite=Lax`, y su duración se limita al
 vencimiento del enlace. Un acceso desconocido, deshabilitado o vencido no abre el formulario.
 

@@ -187,14 +187,32 @@ beforeEach(() => {
 });
 afterEach(() => { process.env = { ...originalEnv }; });
 
-test('production registry preserves the existing Pet House identity and expiration without adding access', () => {
+test('production registry preserves Pet House access with the authorized November expiration', () => {
   const registry = require('../api/config/triagevet-clinics.json');
   assert.equal(registry.length, 1);
   assert.equal(registry[0].client_id, 'pet-house');
   assert.equal(registry[0].clinic_name, 'Pet House');
-  assert.equal(registry[0].expires_at, '2026-10-16T02:59:59.000Z');
-  assert.match(registry[0].access_token_sha256, /^[a-f0-9]{64}$/);
+  assert.equal(registry[0].expires_at, '2026-11-30T02:59:59.000Z');
+  assert.equal(registry[0].access_token_sha256, '4b3ba060403a4b21b68a89e0b3f638e1d918859f8a51e68ee990b3d71805b6db');
+  assert.equal(registry[0].enabled, true);
   assert.ok(!JSON.stringify(registry).includes(legacyToken));
+});
+
+test('Pet House stays available for 45 days and through November 29 in Santiago', () => {
+  const clinic = require('../api/config/triagevet-clinics.json')[0];
+  const expires = Date.parse(clinic.expires_at);
+  const after45Days = Date.parse('2026-10-15T20:28:00.000Z') + 45 * 24 * 60 * 60 * 1000;
+  const resolve = makeAccess().createClinicResolver([
+    { ...clinic, access_token_sha256: hash(legacyToken) },
+  ]);
+  assert.equal(resolve(legacyToken, after45Days).client_id, 'pet-house');
+  assert.equal(resolve(legacyToken, expires).client_id, 'pet-house');
+  assert.equal(resolve(legacyToken, expires + 1), null);
+  const local = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'America/Santiago', year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+  });
+  assert.equal(local.format(new Date(expires)), '2026-11-29 23:59:59');
 });
 
 test('registry rejects ambiguous identities, duplicate token hashes and invalid configuration', () => {
